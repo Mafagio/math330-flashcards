@@ -65,6 +65,12 @@ button:disabled{opacity:.4;cursor:not-allowed}
   padding:8px 12px;margin:0 0 14px;font-size:14px}
 .banner button{padding:5px 11px;font-size:13px}
 
+.resume-card{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+  background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:14px 18px;margin:14px 0}
+.resume-card strong{color:#1e3a8a}
+.resume-card #home-resume-info{color:#3b5bdb;margin-top:3px}
+.resume-card #home-resume-btn{background:var(--good);border-color:var(--good)}
+
 /* cards */
 .cardbox{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
 .cardlabel{font-weight:600;font-size:15px;margin-bottom:10px}

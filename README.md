@@ -24,6 +24,10 @@ si tu fermes l'onglet en plein milieu, à la réouverture le mode **reprend où 
 (position en Apprendre, file + score en Réviser, mêmes cartes en Test) — avec un bandeau
 *« Reprise … »* et un bouton **↺ Recommencer** pour repartir de zéro.
 
+Pour la **révision** non terminée, un bouton **« ▶ Continuer (X/total) »** apparaît aussi
+en haut de l'accueil, avec le nom du deck et le nombre de cartes **restantes** (et un bouton
+*Abandonner*). Clique dessus pour reprendre directement.
+
 ## Utiliser en local
 Ouvre simplement `index.html` dans un navigateur (le manifeste est en `.js`, donc pas besoin de serveur).
 

@@ -36,6 +36,18 @@ function refreshChips() {
   saveSel();
 }
 function deckPool() { return CARDS.filter(c => selected.has(c.cat)); }
+function deckLabel(keys) {
+  const k = [...keys];
+  const coursKeys = COURS_CATS.map(c => c.key), exoKeys = EXO_CATS.map(c => c.key);
+  const hasCours = k.some(x => coursKeys.includes(x)), hasExo = k.some(x => exoKeys.includes(x));
+  const allCours = coursKeys.every(x => k.includes(x)), allExo = exoKeys.every(x => k.includes(x));
+  if (allCours && allExo) return "Tout";
+  if (allCours && !hasExo) return "Tout le cours";
+  if (allExo && !hasCours) return "Tous les exercices";
+  const labels = [...COURS_CATS, ...EXO_CATS].filter(c => k.includes(c.key)).map(c => c.label);
+  if (!labels.length) return "—";
+  return labels.length <= 4 ? labels.join(", ") : labels.slice(0, 4).join(", ") + ` +${labels.length - 4}`;
+}
 
 /* ---------- utils ---------- */
 function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -46,7 +58,7 @@ function backInto(container, card) {
   if (card.back) { const im = new Image(); im.src = card.back; im.alt = ""; container.appendChild(im); }
   else { const d = document.createElement("div"); d.className = "noback"; d.textContent = "Pas de preuve dans le cours pour ce résultat."; container.appendChild(d); }
 }
-function show(id) { $$(".screen").forEach(s => s.classList.remove("active")); $("#" + id).classList.add("active"); window.scrollTo(0, 0); }
+function show(id) { $$(".screen").forEach(s => s.classList.remove("active")); $("#" + id).classList.add("active"); window.scrollTo(0, 0); if (id === "home") renderHomeResume(); }
 
 /* ---------- session persistence (reprendre plus tard) ---------- */
 const CARD_BY_ID = Object.fromEntries(CARDS.map(c => [c.id, c]));
@@ -65,11 +77,25 @@ function showBanner(mode, text, btnLabel, onReset) {
   el.appendChild(span); el.appendChild(btn); el.classList.remove("hidden");
 }
 function hideBanner(mode) { $("#" + mode + "-banner").classList.add("hidden"); }
+function renderHomeResume() {
+  const s = LS.get(KEY.review);
+  const el = $("#home-resume");
+  if (!el) return;
+  if (s && s.queue && s.queue.length) {
+    const remaining = s.queue.length, total = s.total || remaining;
+    $("#home-resume-info").textContent = `Deck : ${s.label || "—"} · il te reste ${remaining} carte(s) sur ${total}.`;
+    $("#home-resume-btn").textContent = `▶ Continuer (${remaining}/${total})`;
+    el.classList.remove("hidden");
+  } else { el.classList.add("hidden"); }
+}
 
 /* ---------- HOME wiring ---------- */
 buildChips($("#cours-cats"), COURS_CATS);
 buildChips($("#exo-cats"), EXO_CATS);
 refreshChips();
+renderHomeResume();
+$("#home-resume-btn").onclick = () => enterReview();
+$("#home-resume-drop").onclick = () => { LS.del(KEY.review); renderHomeResume(); };
 $$("[data-pick]").forEach(a => a.onclick = e => { e.preventDefault(); const g = a.dataset.pick; (g === "cours" ? COURS_CATS : EXO_CATS).forEach(c => selected.add(c.key)); refreshChips(); });
 $$("[data-clear]").forEach(a => a.onclick = e => { e.preventDefault(); const g = a.dataset.clear; (g === "cours" ? COURS_CATS : EXO_CATS).forEach(c => selected.delete(c.key)); refreshChips(); });
 $("#pick-all").onclick = () => { selected = new Set(ALL_KEYS); refreshChips(); };
@@ -121,12 +147,12 @@ $("#learn-next").onclick = () => { L.i = (L.i + 1) % L.deck.length; L.rev = fals
 
 /* ====================== REVIEW ====================== */
 let R = { queue: [], total: 0, done: 0, rev: false };
-function saveReview() { if (R.queue && R.queue.length) LS.set(KEY.review, { queue: idsOf(R.queue), done: R.done, total: R.total }); else LS.del(KEY.review); }
-function startReview() { hideBanner("review"); const d = buildDeck(); R = { queue: d, total: d.length, done: 0, rev: false }; $("#review-done").classList.add("hidden"); saveReview(); renderReview(); show("review"); }
+function saveReview() { if (R.queue && R.queue.length) LS.set(KEY.review, { queue: idsOf(R.queue), done: R.done, total: R.total, label: R.label }); else LS.del(KEY.review); }
+function startReview() { hideBanner("review"); const d = buildDeck(); R = { queue: d, total: d.length, done: 0, label: deckLabel(selected), rev: false }; $("#review-done").classList.add("hidden"); saveReview(); renderReview(); show("review"); }
 function enterReview() {
   const s = LS.get(KEY.review);
   if (s && s.queue && fromIds(s.queue).length) {
-    R = { queue: fromIds(s.queue), total: s.total || s.queue.length, done: s.done || 0, rev: false };
+    R = { queue: fromIds(s.queue), total: s.total || s.queue.length, done: s.done || 0, label: s.label || "", rev: false };
     $("#review-done").classList.add("hidden"); renderReview(); show("review");
     showBanner("review", "Reprise de ta session de révision (progression mémorisée).", "↺ Recommencer",
       () => { LS.del(KEY.review); startReview(); });
