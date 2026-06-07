@@ -60,6 +60,11 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
 .topbar{display:flex;justify-content:space-between;align-items:center;margin:6px 0 14px}
 
+.banner{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:10px;
+  padding:8px 12px;margin:0 0 14px;font-size:14px}
+.banner button{padding:5px 11px;font-size:13px}
+
 /* cards */
 .cardbox{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
 .cardlabel{font-weight:600;font-size:15px;margin-bottom:10px}

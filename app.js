@@ -48,6 +48,24 @@ function backInto(container, card) {
 }
 function show(id) { $$(".screen").forEach(s => s.classList.remove("active")); $("#" + id).classList.add("active"); window.scrollTo(0, 0); }
 
+/* ---------- session persistence (reprendre plus tard) ---------- */
+const CARD_BY_ID = Object.fromEntries(CARDS.map(c => [c.id, c]));
+const idsOf = a => (a || []).map(c => c.id);
+const fromIds = a => (a || []).map(id => CARD_BY_ID[id]).filter(Boolean);
+const LS = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { localStorage.removeItem(k); }
+};
+const KEY = { learn: "m330_learn", review: "m330_review", test: "m330_test" };
+function showBanner(mode, text, btnLabel, onReset) {
+  const el = $("#" + mode + "-banner"); el.innerHTML = "";
+  const span = document.createElement("span"); span.textContent = text;
+  const btn = document.createElement("button"); btn.className = "ghost"; btn.textContent = btnLabel; btn.onclick = onReset;
+  el.appendChild(span); el.appendChild(btn); el.classList.remove("hidden");
+}
+function hideBanner(mode) { $("#" + mode + "-banner").classList.add("hidden"); }
+
 /* ---------- HOME wiring ---------- */
 buildChips($("#cours-cats"), COURS_CATS);
 buildChips($("#exo-cats"), EXO_CATS);
@@ -64,15 +82,26 @@ function guard() {
   shuffleOn = $("#shuffle").checked;
   return true;
 }
-$("#go-learn").onclick = () => { if (guard()) startLearn(); };
-$("#go-review").onclick = () => { if (guard()) startReview(); };
-$("#go-test").onclick = () => { if (guard()) startTest(); };
+$("#go-learn").onclick = () => { if (guard()) enterLearn(); };
+$("#go-review").onclick = () => { if (guard()) enterReview(); };
+$("#go-test").onclick = () => { if (guard()) enterTest(); };
 
 /* ====================== LEARN ====================== */
 let L = { deck: [], i: 0, rev: false };
-function startLearn() { L = { deck: buildDeck(), i: 0, rev: false }; renderLearn(); show("learn"); }
+function saveLearn() { if (L.deck && L.deck.length) LS.set(KEY.learn, { order: idsOf(L.deck), i: L.i }); }
+function startLearn() { hideBanner("learn"); L = { deck: buildDeck(), i: 0, rev: false }; renderLearn(); show("learn"); }
+function enterLearn() {
+  const s = LS.get(KEY.learn);
+  if (s && s.order && s.order.length && fromIds(s.order).length) {
+    L = { deck: fromIds(s.order), i: Math.min(s.i || 0, s.order.length - 1), rev: false };
+    renderLearn(); show("learn");
+    showBanner("learn", "Reprise de ta session d'apprentissage (position mémorisée).", "↺ Recommencer",
+      () => { LS.del(KEY.learn); startLearn(); });
+  } else { startLearn(); }
+}
 function renderLearn() {
   const c = L.deck[L.i];
+  saveLearn();
   $("#learn-counter").textContent = `${L.i + 1} / ${L.deck.length}`;
   $("#learn-label").textContent = c.label;
   $("#learn-front").replaceWith(Object.assign(imgEl(c.front), { id: "learn-front" }));
@@ -92,8 +121,19 @@ $("#learn-next").onclick = () => { L.i = (L.i + 1) % L.deck.length; L.rev = fals
 
 /* ====================== REVIEW ====================== */
 let R = { queue: [], total: 0, done: 0, rev: false };
-function startReview() { const d = buildDeck(); R = { queue: d, total: d.length, done: 0, rev: false }; $("#review-done").classList.add("hidden"); renderReview(); show("review"); }
+function saveReview() { if (R.queue && R.queue.length) LS.set(KEY.review, { queue: idsOf(R.queue), done: R.done, total: R.total }); else LS.del(KEY.review); }
+function startReview() { hideBanner("review"); const d = buildDeck(); R = { queue: d, total: d.length, done: 0, rev: false }; $("#review-done").classList.add("hidden"); saveReview(); renderReview(); show("review"); }
+function enterReview() {
+  const s = LS.get(KEY.review);
+  if (s && s.queue && fromIds(s.queue).length) {
+    R = { queue: fromIds(s.queue), total: s.total || s.queue.length, done: s.done || 0, rev: false };
+    $("#review-done").classList.add("hidden"); renderReview(); show("review");
+    showBanner("review", "Reprise de ta session de révision (progression mémorisée).", "↺ Recommencer",
+      () => { LS.del(KEY.review); startReview(); });
+  } else { startReview(); }
+}
 function renderReview() {
+  saveReview();
   if (!R.queue.length) {
     $("#review-done").classList.remove("hidden");
     $("#review-reveal-ctrl").classList.add("hidden");
@@ -130,6 +170,7 @@ $("#review-restart").onclick = startReview;
 /* ====================== TEST ====================== */
 let T = { cards: [] };
 function startTest() {
+  hideBanner("test");
   const max = deckPool().length;
   $("#test-max").textContent = max;
   const ni = $("#test-n"); ni.max = max; if (+ni.value > max || +ni.value < 1) ni.value = Math.min(5, max);
@@ -137,15 +178,29 @@ function startTest() {
   $("#test-run").classList.add("hidden");
   show("test");
 }
+function enterTest() {
+  const s = LS.get(KEY.test);
+  if (s && s.ids && fromIds(s.ids).length) {
+    T = { cards: fromIds(s.ids) };
+    $("#test-max").textContent = deckPool().length;
+    renderTestRun();
+    $("#test-setup").classList.add("hidden");
+    $("#test-run").classList.remove("hidden");
+    show("test");
+    showBanner("test", `Reprise — test de ${T.cards.length} carte(s) en cours.`, "Nouveau test",
+      () => { LS.del(KEY.test); startTest(); });
+  } else { startTest(); }
+}
 $("#test-start").onclick = () => {
   const max = deckPool().length;
   let n = Math.max(1, Math.min(max, parseInt($("#test-n").value || "1", 10)));
   T.cards = shuffle(deckPool()).slice(0, n);
+  LS.set(KEY.test, { ids: idsOf(T.cards) });
   renderTestRun();
   $("#test-setup").classList.add("hidden");
   $("#test-run").classList.remove("hidden");
 };
-$("#test-again").onclick = startTest;
+$("#test-again").onclick = () => { LS.del(KEY.test); startTest(); };
 function renderTestRun() {
   const wrap = $("#test-cards"); wrap.innerHTML = "";
   $("#test-showsol").checked = false;

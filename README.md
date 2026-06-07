@@ -18,6 +18,12 @@ sous forme de cartes (énoncé → réponse).
 La sélection des catégories (Ch. 1–9 du cours et/ou Séries 1–12 d'exercices, multi-sélection)
 s'applique aux trois modes. Le choix est mémorisé dans le navigateur.
 
+### Reprendre plus tard
+Chaque mode **sauvegarde automatiquement** ta progression dans le navigateur (localStorage) :
+si tu fermes l'onglet en plein milieu, à la réouverture le mode **reprend où tu en étais**
+(position en Apprendre, file + score en Réviser, mêmes cartes en Test) — avec un bandeau
+*« Reprise … »* et un bouton **↺ Recommencer** pour repartir de zéro.
+
 ## Utiliser en local
 Ouvre simplement `index.html` dans un navigateur (le manifeste est en `.js`, donc pas besoin de serveur).
 
