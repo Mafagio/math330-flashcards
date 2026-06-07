@@ -84,7 +84,7 @@ function renderHomeResume() {
   if (s && s.queue && s.queue.length) {
     const remaining = s.queue.length, total = s.total || remaining;
     $("#home-resume-info").textContent = `Deck : ${s.label || "—"} · il te reste ${remaining} carte(s) sur ${total}.`;
-    $("#home-resume-btn").textContent = `▶ Continuer (${remaining}/${total})`;
+    $("#home-resume-btn").textContent = `Continuer (${remaining}/${total})`;
     el.classList.remove("hidden");
   } else { el.classList.add("hidden"); }
 }
@@ -121,7 +121,7 @@ function enterLearn() {
   if (s && s.order && s.order.length && fromIds(s.order).length) {
     L = { deck: fromIds(s.order), i: Math.min(s.i || 0, s.order.length - 1), rev: false };
     renderLearn(); show("learn");
-    showBanner("learn", "Reprise de ta session d'apprentissage (position mémorisée).", "↺ Recommencer",
+    showBanner("learn", "Reprise de ta session d'apprentissage (position mémorisée).", "Recommencer",
       () => { LS.del(KEY.learn); startLearn(); });
   } else { startLearn(); }
 }
@@ -154,7 +154,7 @@ function enterReview() {
   if (s && s.queue && fromIds(s.queue).length) {
     R = { queue: fromIds(s.queue), total: s.total || s.queue.length, done: s.done || 0, label: s.label || "", rev: false };
     $("#review-done").classList.add("hidden"); renderReview(); show("review");
-    showBanner("review", "Reprise de ta session de révision (progression mémorisée).", "↺ Recommencer",
+    showBanner("review", "Reprise de ta session de révision (progression mémorisée).", "Recommencer",
       () => { LS.del(KEY.review); startReview(); });
   } else { startReview(); }
 }

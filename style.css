@@ -44,7 +44,6 @@ footer{max-width:920px;margin:10px auto 40px;padding:0 20px;font-size:12px}
 .mode{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;
   border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;color:var(--ink);cursor:pointer;transition:.12s}
 .mode:hover{border-color:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.05)}
-.modeicon{font-size:24px}
 .modename{font-weight:700;font-size:16px}
 .modedesc{font-weight:400;font-size:13px;color:var(--muted)}
 

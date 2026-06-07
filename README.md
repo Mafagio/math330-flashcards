@@ -22,9 +22,9 @@ s'applique aux trois modes. Le choix est mémorisé dans le navigateur.
 Chaque mode **sauvegarde automatiquement** ta progression dans le navigateur (localStorage) :
 si tu fermes l'onglet en plein milieu, à la réouverture le mode **reprend où tu en étais**
 (position en Apprendre, file + score en Réviser, mêmes cartes en Test) — avec un bandeau
-*« Reprise … »* et un bouton **↺ Recommencer** pour repartir de zéro.
+*« Reprise … »* et un bouton **Recommencer** pour repartir de zéro.
 
-Pour la **révision** non terminée, un bouton **« ▶ Continuer (X/total) »** apparaît aussi
+Pour la **révision** non terminée, un bouton **« Continuer (X/total) »** apparaît aussi
 en haut de l'accueil, avec le nom du deck et le nombre de cartes **restantes** (et un bouton
 *Abandonner*). Clique dessus pour reprendre directement.
 
