@@ -1,53 +1,54 @@
-# MATH-330 — Flashcards (Martingales & Brownian motion)
+# Mes flashcards — hub multi-cours
 
-Petit site statique (fond blanc, sans dépendance) pour réviser le cours et les exercices
-sous forme de cartes (énoncé → réponse).
+Site statique (fond blanc, sans dépendance, sans build) regroupant plusieurs cours de
+flashcards. La **page de garde** (`index.html`) liste les cours ; chaque cours est une
+appli de flashcards autonome dans `courses/<id>/`.
 
-## Contenu
-- **124 cartes** : 52 du cours (théorèmes / lemmes / propositions / corollaires / claims, énoncé + preuve)
-  et 72 exercices (énoncé + solution, sans les exercices « additional »).
-- Images dans `cards/` ; manifeste dans `cards.js` (généré).
+## Structure
+```
+index.html        ← page de garde (choix du cours)
+landing.css
+courses.js        ← liste des cours affichés sur la garde
+courses/
+  math330/        ← un cours = appli complète + ses images
+    index.html  style.css  app.js
+    cards.js      ← manifeste (window.COURSE + window.CARDS + catégories)
+    cards/        ← images (énoncés / preuves / exos / solutions)
+```
 
-## Trois modes
+## Un cours = 3 modes
 1. **Apprendre** — parcourir les cartes, afficher la réponse, naviguer.
-2. **Réviser** — pour chaque carte : *« je connaissais / pas »*. Les cartes ratées reviennent
-   jusqu'à ce que **tout soit réussi une fois**. Case **Mélanger** pour l'ordre aléatoire.
-3. **Test** — tire **N cartes au hasard** (N de 1 au total sélectionné). Tu écris tes réponses,
-   tu cliques **« Copier pour Claude »**, tu m'envoies le tout → je corrige **sur 6 (barème fédéral)**.
+2. **Réviser** — *« je connaissais / pas »* ; les ratées reviennent jusqu'à tout réussir une
+   fois ; case **Mélanger** ; barre de progression.
+3. **Test** — N cartes au hasard (1 → total), énoncés seuls ; bouton **« Copier pour Claude »**
+   → tu m'envoies tes réponses, je corrige **sur 6 (barème fédéral)**.
 
-La sélection des catégories (Ch. 1–9 du cours et/ou Séries 1–12 d'exercices, multi-sélection)
-s'applique aux trois modes. Le choix est mémorisé dans le navigateur.
+Sélection des cartes en **multi-sélection** (chapitres du cours + séries d'exercices),
+mémorisée par cours. **Reprise plus tard** : chaque mode sauvegarde sa session ; pour la
+révision, un bouton **« Continuer (X/total) »** apparaît sur l'accueil du cours.
 
-### Reprendre plus tard
-Chaque mode **sauvegarde automatiquement** ta progression dans le navigateur (localStorage) :
-si tu fermes l'onglet en plein milieu, à la réouverture le mode **reprend où tu en étais**
-(position en Apprendre, file + score en Réviser, mêmes cartes en Test) — avec un bandeau
-*« Reprise … »* et un bouton **Recommencer** pour repartir de zéro.
+> La progression est **isolée par cours** (clés localStorage préfixées par l'`id` du cours,
+> ex. `math330_review`), donc les cours ne mélangent pas leurs sauvegardes.
 
-Pour la **révision** non terminée, un bouton **« Continuer (X/total) »** apparaît aussi
-en haut de l'accueil, avec le nom du deck et le nombre de cartes **restantes** (et un bouton
-*Abandonner*). Clique dessus pour reprendre directement.
+## Ajouter un cours
+1. Crée `courses/<nouvel-id>/` (copie d'un cours existant, ou via le pipeline d'extraction).
+2. Mets-y son `cards.js` — la 1re ligne doit définir le cours :
+   ```js
+   window.COURSE = { id: "<nouvel-id>", code: "MATH-XXX", name: "Nom du cours" };
+   ```
+   (l'`id` sert au préfixe localStorage et au dossier ; le titre s'affiche tout seul).
+3. Ajoute une entrée dans `courses.js` :
+   ```js
+   { id: "<nouvel-id>", code: "MATH-XXX", name: "Nom du cours", dir: "courses/<nouvel-id>/", count: N, available: true },
+   ```
 
 ## Utiliser en local
-Ouvre simplement `index.html` dans un navigateur (le manifeste est en `.js`, donc pas besoin de serveur).
+Ouvre `index.html` dans un navigateur (manifeste en `.js`, pas besoin de serveur).
 
-## Mettre sur GitHub Pages
-1. Crée un dépôt et pousse le contenu de ce dossier `site/` (y compris `cards/`).
-   ```bash
-   git init
-   git add .
-   git commit -m "MATH-330 flashcards"
-   git branch -M main
-   git remote add origin <URL-de-ton-repo>
-   git push -u origin main
-   ```
-2. Sur GitHub : **Settings → Pages → Build and deployment → Source: Deploy from a branch**,
-   branche `main`, dossier `/ (root)`. Le site sera servi sur `https://<user>.github.io/<repo>/`.
+## GitHub Pages
+Pousse le contenu de `site/` sur le dépôt, puis **Settings → Pages → Deploy from a branch →
+`main` / `/ (root)`**. Mises à jour : `git add -A && git commit -m "..." && git push`.
 
-> Si tu pousses tout le dossier parent (Cours/, Exercices/, …), configure Pages pour servir
-> depuis `/site` plutôt que la racine, ou déplace le contenu de `site/` à la racine du dépôt.
-
-## Raccourcis clavier
-- `Espace` : afficher / masquer la réponse
-- `←` / `→` : carte précédente / suivante (Apprendre)
+## Raccourcis clavier (dans un cours)
+- `Espace` : afficher / masquer la réponse · `←`/`→` : naviguer (Apprendre)
 - En révision : `1` = pas connue, `2` = connue

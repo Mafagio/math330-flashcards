@@ -2,6 +2,8 @@
 const CARDS = window.CARDS || [];
 const COURS_CATS = window.COURS_CATS || [];
 const EXO_CATS = window.EXO_CATS || [];
+const COURSE = window.COURSE || { id: "course", code: "", name: "Flashcards" };
+const PFX = COURSE.id; // namespace localStorage per course
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -9,13 +11,13 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const ALL_KEYS = [...COURS_CATS, ...EXO_CATS].map(c => c.key);
 let selected = new Set();
 try {
-  const saved = JSON.parse(localStorage.getItem("m330sel") || "null");
+  const saved = JSON.parse(localStorage.getItem(PFX + "_sel") || "null");
   if (Array.isArray(saved) && saved.length) selected = new Set(saved.filter(k => ALL_KEYS.includes(k)));
 } catch (e) {}
 if (!selected.size) selected = new Set(ALL_KEYS); // default: everything
 let shuffleOn = true;
 
-function saveSel() { localStorage.setItem("m330sel", JSON.stringify([...selected])); }
+function saveSel() { localStorage.setItem(PFX + "_sel", JSON.stringify([...selected])); }
 
 function buildChips(container, cats) {
   container.innerHTML = "";
@@ -69,7 +71,7 @@ const LS = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
   del(k) { localStorage.removeItem(k); }
 };
-const KEY = { learn: "m330_learn", review: "m330_review", test: "m330_test" };
+const KEY = { learn: PFX + "_learn", review: PFX + "_review", test: PFX + "_test" };
 function showBanner(mode, text, btnLabel, onReset) {
   const el = $("#" + mode + "-banner"); el.innerHTML = "";
   const span = document.createElement("span"); span.textContent = text;
@@ -90,6 +92,8 @@ function renderHomeResume() {
 }
 
 /* ---------- HOME wiring ---------- */
+if ($("#course-title")) $("#course-title").innerHTML = `${COURSE.name} <span class="muted">(${COURSE.code})</span>`;
+document.title = `${COURSE.code} — Flashcards`;
 buildChips($("#cours-cats"), COURS_CATS);
 buildChips($("#exo-cats"), EXO_CATS);
 refreshChips();

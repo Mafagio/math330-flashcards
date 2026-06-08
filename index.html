@@ -3,172 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MATH-330 — Flashcards (Martingales & Brownian motion)</title>
+<title>Mes flashcards — Cours</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="landing.css">
 </head>
 <body>
 
 <header>
-  <h1>Martingales &amp; Brownian motion <span class="muted">(MATH-330)</span></h1>
-  <p class="muted small">Flashcards — cours &amp; exercices</p>
+  <h1>Mes flashcards</h1>
+  <p class="muted">Choisis un cours pour réviser — cours &amp; exercices, en cartes (énoncé → réponse).</p>
 </header>
 
-<!-- ====================== HOME ====================== -->
-<main id="home" class="screen active">
-  <section id="home-resume" class="resume-card hidden">
-    <div>
-      <strong>Reprendre ta révision</strong>
-      <div id="home-resume-info" class="small"></div>
-    </div>
-    <div class="row">
-      <button id="home-resume-btn"></button>
-      <button class="ghost" id="home-resume-drop">Abandonner</button>
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>1 · Choisis les cartes</h2>
-
-    <div class="catgroup">
-      <div class="catgroup-head">
-        <strong>Cours</strong>
-        <span class="links"><a href="#" data-pick="cours">tout</a> · <a href="#" data-clear="cours">rien</a></span>
-      </div>
-      <div id="cours-cats" class="chips"></div>
-    </div>
-
-    <div class="catgroup">
-      <div class="catgroup-head">
-        <strong>Exercices</strong>
-        <span class="links"><a href="#" data-pick="exo">tout</a> · <a href="#" data-clear="exo">rien</a></span>
-      </div>
-      <div id="exo-cats" class="chips"></div>
-    </div>
-
-    <div class="row spread">
-      <div>
-        <button class="ghost" id="pick-all">Tout sélectionner</button>
-        <button class="ghost" id="pick-none">Rien</button>
-      </div>
-      <label class="toggle"><input type="checkbox" id="shuffle" checked> Mélanger</label>
-    </div>
-    <p id="selinfo" class="muted small"></p>
-  </section>
-
-  <section class="panel">
-    <h2>2 · Choisis un mode</h2>
-    <div class="modes">
-      <button class="mode" id="go-learn"><span class="modename">Apprendre</span><span class="modedesc">Parcourir les cartes, voir l'énoncé puis la réponse.</span></button>
-      <button class="mode" id="go-review"><span class="modename">Réviser</span><span class="modedesc">« Je connaissais / pas ». Les ratées reviennent jusqu'à tout réussir une fois.</span></button>
-      <button class="mode" id="go-test"><span class="modename">Test</span><span class="modedesc">N cartes au hasard, tu écris, j'évalue sur 6 (barème fédéral).</span></button>
-    </div>
-  </section>
-</main>
-
-<!-- ====================== LEARN ====================== -->
-<main id="learn" class="screen">
-  <div class="topbar">
-    <button class="ghost back">← Menu</button>
-    <span id="learn-counter" class="muted"></span>
-    <span></span>
-  </div>
-  <div id="learn-banner" class="banner hidden"></div>
-  <div class="cardbox">
-    <div id="learn-label" class="cardlabel"></div>
-    <div class="side-head">Énoncé</div>
-    <div id="learn-front" class="imgwrap"></div>
-    <div id="learn-backwrap" class="hidden">
-      <div class="side-head answer">Réponse</div>
-      <div id="learn-back" class="imgwrap"></div>
-    </div>
-  </div>
-  <div class="controls">
-    <button class="ghost" id="learn-prev">← Précédent</button>
-    <button id="learn-reveal">Afficher la réponse</button>
-    <button class="ghost" id="learn-next">Suivant →</button>
-  </div>
-</main>
-
-<!-- ====================== REVIEW ====================== -->
-<main id="review" class="screen">
-  <div class="topbar">
-    <button class="ghost back">← Menu</button>
-    <span id="review-progress" class="muted"></span>
-    <span></span>
-  </div>
-  <div id="review-banner" class="banner hidden"></div>
-  <div class="progressbar"><div id="review-bar"></div></div>
-  <div class="cardbox">
-    <div id="review-label" class="cardlabel"></div>
-    <div class="side-head">Énoncé</div>
-    <div id="review-front" class="imgwrap"></div>
-    <div id="review-backwrap" class="hidden">
-      <div class="side-head answer">Réponse</div>
-      <div id="review-back" class="imgwrap"></div>
-    </div>
-  </div>
-  <div class="controls" id="review-reveal-ctrl">
-    <button id="review-reveal">Afficher la réponse</button>
-  </div>
-  <div class="controls hidden" id="review-grade-ctrl">
-    <button class="bad" id="review-no">✗ Je ne connaissais pas</button>
-    <button class="good" id="review-yes">✓ Je connaissais</button>
-  </div>
-  <div id="review-done" class="done hidden">
-    <h2>Terminé !</h2>
-    <p class="muted">Toutes les cartes sélectionnées ont été réussies au moins une fois.</p>
-    <button id="review-restart">Recommencer</button>
-    <button class="ghost back">← Menu</button>
-  </div>
-</main>
-
-<!-- ====================== TEST ====================== -->
-<main id="test" class="screen">
-  <div class="topbar">
-    <button class="ghost back">← Menu</button>
-    <span class="muted">Mode test</span>
-    <span></span>
-  </div>
-  <div id="test-banner" class="banner hidden"></div>
-
-  <!-- setup -->
-  <section id="test-setup" class="panel">
-    <h2>Test</h2>
-    <p class="muted">Choisis le nombre de cartes tirées au hasard parmi ta sélection.</p>
-    <div class="row">
-      <label>Nombre de cartes :
-        <input type="number" id="test-n" min="1" value="5">
-      </label>
-      <span class="muted small">/ <span id="test-max"></span> disponibles</span>
-    </div>
-    <button id="test-start">Commencer le test</button>
-  </section>
-
-  <!-- run -->
-  <section id="test-run" class="hidden">
-    <div class="panel notice">
-      <strong>Écris tes réponses</strong> (sur papier ou directement à Claude), puis clique
-      <em>« Copier pour Claude »</em> et envoie-moi le tout : je corrige sur 6 (barème fédéral).
-      <div class="row" style="margin-top:10px">
-        <button id="test-copy">Copier la liste pour Claude</button>
-        <label class="toggle"><input type="checkbox" id="test-showsol"> Voir les solutions (auto-correction)</label>
-      </div>
-      <span id="copyok" class="muted small"></span>
-    </div>
-    <div id="test-cards"></div>
-    <div class="controls">
-      <button class="ghost back">← Menu</button>
-      <button id="test-again">Nouveau test</button>
-    </div>
-  </section>
+<main>
+  <div id="courses" class="grid"></div>
+  <p id="empty" class="muted small hidden">Aucun cours pour l'instant. Ajoute une entrée dans <code>courses.js</code>.</p>
 </main>
 
 <footer class="muted small">
-  Astuce : <kbd>Espace</kbd> = révéler · <kbd>←</kbd>/<kbd>→</kbd> = naviguer · en révision <kbd>1</kbd>=pas connue, <kbd>2</kbd>=connue.
+  3 modes par cours : Apprendre · Réviser · Test. Progression sauvegardée par cours dans le navigateur.
 </footer>
 
-<script src="cards.js"></script>
-<script src="app.js"></script>
+<script src="courses.js"></script>
+<script>
+  const COURSES = window.COURSES || [];
+  const grid = document.getElementById("courses");
+  if (!COURSES.length) document.getElementById("empty").classList.remove("hidden");
+  COURSES.forEach((c, i) => {
+    const el = document.createElement(c.available ? "a" : "div");
+    el.className = "course" + (c.available ? "" : " soon");
+    if (c.available) el.href = c.dir;
+    el.innerHTML =
+      `<div class="num">Cours ${i + 1}</div>
+       <div class="code">${c.code || ""}</div>
+       <div class="name">${c.name}</div>
+       <div class="meta">${c.available ? (c.count + " cartes") : "bientôt disponible"}</div>`;
+    grid.appendChild(el);
+  });
+</script>
 </body>
 </html>
