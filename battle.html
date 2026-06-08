@@ -6,6 +6,9 @@
 <title>Battle — Flashcards</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2032%2032%27%20fill%3D%27none%27%20stroke%3D%27%230a66ff%27%20stroke-width%3D%272.6%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%2025%20L28%204%27/%3E%3Cpath%20d%3D%27M7.5%2018.5%20L13.5%2024.5%27/%3E%3Cpath%20d%3D%27M5%2023%20L9%2027%27/%3E%3Cpath%20d%3D%27M25%2025%20L4%204%27/%3E%3Cpath%20d%3D%27M18.5%2024.5%20L24.5%2018.5%27/%3E%3Cpath%20d%3D%27M23%2027%20L27%2023%27/%3E%3C/svg%3E">
 
+<!-- Thème appliqué AVANT le rendu (anti-flash) ; défaut = sombre -->
+<script>(function(){try{var t=localStorage.getItem('battle_theme');if(t!=='light'&&t!=='dark')t='dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+
 <!-- KaTeX (même rendu que le reste du site) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -13,6 +16,30 @@
 
 <style>
 :root{
+  /* ===== THÈME SOMBRE (par défaut) ===== */
+  --accent:#6b6bff;
+  --accent-soft:rgba(107,107,255,.18);
+  --link:#b9a6ff;
+  --ink:#eaecf5;
+  --muted:#a6acc4;
+  --line:rgba(255,255,255,.10);
+  --bg:#0a0a14;
+  --panel:rgba(20,22,40,.72);
+  --good:#37d39a;
+  --good-soft:rgba(55,211,154,.16);
+  --bad:#ff6b6b;
+  --bad-soft:rgba(255,107,107,.16);
+  --warn:#e6b85e;
+  --warn-soft:rgba(230,184,94,.16);
+  --chip-bg:rgba(255,255,255,.06);
+  --btn-bg:rgba(255,255,255,.08);
+  --track:rgba(255,255,255,.13);
+  --track2:rgba(255,255,255,.28);
+  --radius:16px;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 34px rgba(0,0,0,.42);
+}
+:root[data-theme="light"]{
+  /* ===== THÈME CLAIR (d'origine) ===== */
   --accent:#0a66ff;
   --accent-soft:#e8f0ff;
   --link:#6b3fa0;
@@ -20,14 +47,17 @@
   --muted:#6b6b73;
   --line:#ececef;
   --bg:#ffffff;
-  --panel:#fafafb;
+  --panel:#ffffff;
   --good:#1a8f5a;
   --good-soft:#e4f5ec;
   --bad:#d23b3b;
   --bad-soft:#fbe9e9;
   --warn:#c9851f;
   --warn-soft:#fdf2e0;
-  --radius:16px;
+  --chip-bg:#fafafb;
+  --btn-bg:#ffffff;
+  --track:#eef0f3;
+  --track2:#c9ccd4;
   --shadow:0 1px 2px rgba(20,20,30,.04), 0 6px 22px rgba(20,20,30,.06);
 }
 *{box-sizing:border-box}
@@ -36,6 +66,14 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   color:var(--ink); background:var(--bg);
   line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+/* SOMBRE : image de fond + voile pour la lisibilité */
+:root:not([data-theme="light"]) body{
+  background:#0a0a14 url('battle-assets/bg-battle.jpg') center/cover fixed no-repeat;
+}
+:root:not([data-theme="light"]) body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(rgba(8,8,18,.72), rgba(8,8,18,.86));
 }
 a{color:var(--link);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -54,18 +92,19 @@ header.bar h1{font-size:22px;margin:0;letter-spacing:-.02em}
 .spacer{flex:1}
 .chip{
   display:inline-flex;align-items:center;gap:6px;
-  background:var(--panel);border:1px solid var(--line);
+  background:var(--panel);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  border:1px solid var(--line);
   border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600;
 }
 .chip .lab{color:var(--muted);font-weight:500}
 .btn{
-  border:1px solid var(--line);background:#fff;border-radius:12px;
+  border:1px solid var(--line);background:var(--btn-bg);border-radius:12px;
   padding:9px 14px;font-size:14px;font-weight:600;color:var(--ink);
   transition:.12s ease;
 }
-.btn:hover{border-color:#d9d9de;background:#fcfcfd}
+.btn:hover{border-color:var(--accent);background:var(--chip-bg)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.primary:hover{background:#0a5be0}
+.btn.primary:hover{filter:brightness(1.08)}
 .btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
 .btn.ghost:hover{background:var(--panel);color:var(--ink)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
@@ -87,7 +126,7 @@ nav.tabs button.active{background:var(--accent-soft);color:var(--accent)}
 
 /* ---------- Cards / panels ---------- */
 .card{
-  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--panel);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border:1px solid var(--line);border-radius:var(--radius);
   box-shadow:var(--shadow);padding:22px;margin-bottom:18px;
 }
 .card h2{margin:0 0 4px;font-size:17px;letter-spacing:-.01em}
@@ -107,10 +146,10 @@ nav.tabs button.active{background:var(--accent-soft);color:var(--accent)}
 .player .xp{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
 .player .meta{margin-top:6px;color:var(--muted);font-size:13px}
 .vs{font-weight:800;color:var(--muted);font-size:15px;
-   border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:#fff}
-.xpbar{height:10px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-top:16px;display:flex}
+   border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:var(--panel)}
+.xpbar{height:10px;border-radius:999px;background:var(--track);overflow:hidden;margin-top:16px;display:flex}
 .xpbar .mine{background:var(--accent)}
-.xpbar .theirs{background:#c9ccd4}
+.xpbar .theirs{background:var(--track2)}
 .token-hint{margin-top:14px;font-size:13.5px;color:var(--muted)}
 
 /* feed */
@@ -123,14 +162,14 @@ nav.tabs button.active{background:var(--accent-soft);color:var(--accent)}
 label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
 select,input[type=text],input[type=password],textarea{
   width:100%;font-family:inherit;font-size:15px;color:var(--ink);
-  border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;
+  border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--chip-bg);
 }
 textarea{min-height:150px;resize:vertical;line-height:1.55}
 select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .checks{display:flex;flex-wrap:wrap;gap:8px}
 .checks label{
   display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);
-  border-radius:10px;padding:7px 11px;font-size:13.5px;cursor:pointer;background:#fff;
+  border-radius:10px;padding:7px 11px;font-size:13.5px;cursor:pointer;background:var(--chip-bg);
 }
 .checks label:has(input:checked){background:var(--accent-soft);border-color:#cfe0ff;color:var(--accent)}
 .checks input{accent-color:var(--accent)}
@@ -141,13 +180,13 @@ select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);
   color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
 .answer-reveal{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line)}
 .conf-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-.conf{flex:1;min-width:120px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:12px 10px;text-align:center;font-weight:700;transition:.12s}
+.conf{flex:1;min-width:120px;border-radius:12px;border:1px solid var(--line);background:var(--chip-bg);padding:12px 10px;text-align:center;font-weight:700;transition:.12s}
 .conf .k{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px}
-.conf.unknown:hover{border-color:#c9ccd4;background:var(--panel)}
+.conf.unknown:hover{border-color:var(--line);background:var(--chip-bg)}
 .conf.c60{color:var(--warn)} .conf.c60:hover{background:var(--warn-soft);border-color:#f0d9a8}
 .conf.c80{color:var(--accent)} .conf.c80:hover{background:var(--accent-soft);border-color:#cfe0ff}
 .conf.c95{color:var(--good)} .conf.c95:hover{background:var(--good-soft);border-color:#bfe6cf}
-.progress{height:6px;border-radius:999px;background:#eef0f3;overflow:hidden;margin-bottom:16px}
+.progress{height:6px;border-radius:999px;background:var(--track);overflow:hidden;margin-bottom:16px}
 .progress > div{height:100%;background:var(--accent);transition:width .25s}
 
 /* audits */
@@ -197,13 +236,14 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 
 /* ---------- Logo / marque ---------- */
 .brand{display:inline-flex;align-items:center;gap:8px}
-.battle-logo{width:1.1em;height:1.1em;color:var(--accent);flex:none}
+.brand-logo{flex:none;width:1.15em;height:1.15em}
+#theme-toggle{font-size:16px;line-height:1;padding:7px 10px}
 
 /* ---------- Rangs ---------- */
 #hp-rank img{margin-right:5px}
 .rk-row{display:flex;align-items:center;gap:8px;margin:8px 0 2px}
 .rk-name{font-weight:700;font-size:14.5px}
-.rk-bar{height:7px;border-radius:999px;background:#e9ebf0;overflow:hidden;margin-top:10px}
+.rk-bar{height:7px;border-radius:999px;background:var(--track);overflow:hidden;margin-top:10px}
 .rk-bar>div{height:100%;background:var(--accent);border-radius:999px;transition:width .3s}
 .rk-next{margin-top:6px}
 /* classement */
@@ -218,7 +258,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 /* grille des paliers */
 .ranks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .rank-cell{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;
-  border:1px solid var(--line);border-radius:14px;padding:16px 8px 12px;background:#fff;text-align:center}
+  border:1px solid var(--line);border-radius:14px;padding:16px 8px 12px;background:var(--panel);text-align:center}
 .rank-cell.current{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .rank-cell-name{font-weight:700;font-size:14px}
 .rank-cell-tag{position:absolute;top:8px;right:8px;background:var(--accent);color:#fff;
@@ -230,7 +270,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 
 <!-- ============ LOGIN ============ -->
 <div id="login" class="wrap login">
-  <h1 class="brand"><svg class="battle-logo" viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Battle"><path d="M7 25 L28 4"/><path d="M7.5 18.5 L13.5 24.5"/><path d="M5 23 L9 27"/><path d="M25 25 L4 4"/><path d="M18.5 24.5 L24.5 18.5"/><path d="M23 27 L27 23"/></svg><span>Battle</span></h1>
+  <h1 class="brand"><img class="brand-logo" src="battle-assets/ui/ic-battle.png" width="26" height="26" style="object-fit:contain" alt="Battle"><span>Battle</span></h1>
   <p class="sub">Flashcards proba/stats — toi contre ton pote.</p>
   <div class="card">
     <div>
@@ -260,12 +300,13 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 <!-- ============ APP ============ -->
 <div id="app" class="wrap hidden">
   <header class="bar">
-    <h1 class="brand"><svg class="battle-logo" viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Battle"><path d="M7 25 L28 4"/><path d="M7.5 18.5 L13.5 24.5"/><path d="M5 23 L9 27"/><path d="M25 25 L4 4"/><path d="M18.5 24.5 L24.5 18.5"/><path d="M23 27 L27 23"/></svg><span>Battle</span></h1>
+    <h1 class="brand"><img class="brand-logo" src="battle-assets/ui/ic-battle.png" width="26" height="26" style="object-fit:contain" alt="Battle"><span>Battle</span></h1>
     <span class="spacer"></span>
-    <span class="chip"><span class="lab">XP</span> <span id="hp-xp">0</span></span>
+    <span class="chip"><img src="battle-assets/ui/ic-xp.png" width="20" height="20" style="object-fit:contain;vertical-align:-4px" alt="XP"> <span id="hp-xp">0</span></span>
     <span class="chip" id="hp-rank"></span>
-    <span class="chip">🪙 <span id="hp-tok">0</span></span>
-    <span class="chip"><span class="lab">👤</span> <span id="hp-name"></span></span>
+    <span class="chip"><img src="battle-assets/ui/ic-jeton.png" width="18" height="18" style="object-fit:contain;vertical-align:-4px" alt="jetons"> <span id="hp-tok">0</span></span>
+    <span class="chip"><img src="battle-assets/ui/ic-profil.png" width="18" height="18" style="object-fit:contain;vertical-align:-4px" alt=""> <span id="hp-name"></span></span>
+    <button class="btn ghost sm" id="theme-toggle" title="Thème clair / sombre" aria-label="Changer de thème">☀</button>
     <button class="btn ghost sm" id="logout">Déconnexion</button>
   </header>
 
@@ -291,7 +332,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
       <ol class="lb-list" id="lb-list"></ol>
     </div>
     <div class="card">
-      <h2>Activité</h2>
+      <h2><img src="battle-assets/ui/ic-activite.png" width="20" height="20" style="object-fit:contain;vertical-align:-4px" alt=""> Activité</h2>
       <p class="sub">Le fil de la rivalité.</p>
       <ul class="feed" id="feed"></ul>
     </div>
@@ -344,7 +385,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
     </div>
 
     <div class="card hidden" id="review-done">
-      <h2>Session terminée 🎉</h2>
+      <h2>Session terminée</h2>
       <p class="sub" id="rv-summary"></p>
       <button class="btn primary" id="rv-again">Nouvelle session</button>
     </div>
@@ -362,7 +403,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- CHALLENGE -->
   <section data-panel="challenge" class="hidden">
     <div class="card">
-      <h2>Challenger ton pote 🪙</h2>
+      <h2>Challenger ton pote <img src="battle-assets/ui/ic-jeton.png" width="20" height="20" style="object-fit:contain;vertical-align:-4px" alt=""></h2>
       <p class="sub">Dépense un jeton pour forcer un audit sur une carte qu'il prétend connaître.
         S'il rate : <b>+5 XP</b> pour toi. S'il réussit : <b>+3 XP</b> pour lui (le jeton est perdu).</p>
       <div id="ch-list"></div>
@@ -372,7 +413,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
   <!-- DUELS -->
   <section data-panel="duels" class="hidden">
     <div class="card">
-      <h2>Lancer un duel 🤺</h2>
+      <h2>Lancer un duel <img src="battle-assets/ui/ic-vs.png" width="20" height="20" style="object-fit:contain;vertical-align:-4px" alt=""></h2>
       <p class="sub">6 cartes tirées au hasard, vous répondez tous les deux, le plus haut total gagne
         (+10 XP, +2 pour l'autre).</p>
       <div class="row">
@@ -462,6 +503,19 @@ function maybeRankUp(oldXp, newXp){
  const b=rankOf(newXp);
  if(b.index>rankOf(oldXp).index) toast("⬆️ Nouveau rang : "+b.name+" !", "good");
 }
+
+/* ---------- Icônes UI (mes images) ---------- */
+function icon(name,size){ size=size||20;
+ return '<img src="battle-assets/ui/ic-'+name+'.png" width="'+size+'" height="'+size+
+        '" style="object-fit:contain;vertical-align:-3px" alt="">'; }
+/* table émoji -> icône, pour les textes générés côté backend (feed) et les toasts */
+const EMOJI_ICON = [["⚔️","battle"],["🪙","jeton"],["🎯","recompense"],["🎁","recompense"],
+ ["📝","validation"],["✅","validation"],["👋","activite"],["🎲","recompense"],
+ ["🏆","recompense"],["🤺","vs"]];
+function iconifyText(s){ let h=escapeHtml(s==null?"":String(s));
+ for(const [emo,name] of EMOJI_ICON){ if(h.indexOf(emo)>=0) h=h.split(emo).join(icon(name,16)); }
+ return h; }
+
 const $  = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
@@ -505,7 +559,7 @@ function tex(el, raw){
 /* ---------- toast ---------- */
 function toast(msg, kind=""){
   const t=document.createElement("div");
-  t.className="toast "+kind; t.textContent=msg;
+  t.className="toast "+kind; t.innerHTML=iconifyText(msg);
   $("#toasts").appendChild(t);
   setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity .3s"; setTimeout(()=>t.remove(),300); }, 2600);
 }
@@ -547,6 +601,19 @@ $("#logout").onclick = ()=>{
   localStorage.removeItem("battle_creds"); creds=null;
   $("#app").classList.add("hidden"); $("#login").classList.remove("hidden");
 };
+
+/* ---------- Thème clair / sombre ---------- */
+function applyTheme(t){
+  t = (t==="light") ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  try{ localStorage.setItem("battle_theme", t); }catch(e){}
+  const b=$("#theme-toggle"); if(b){ b.textContent = (t==="dark") ? "☀" : "☾"; }
+}
+$("#theme-toggle").onclick = ()=>{
+  const cur = document.documentElement.getAttribute("data-theme")==="light" ? "light" : "dark";
+  applyTheme(cur==="dark" ? "light" : "dark");
+};
+applyTheme(document.documentElement.getAttribute("data-theme"));
 
 async function enterApp(){
   // valide les identifiants
@@ -601,7 +668,7 @@ async function renderDash(){
 
   const V=$("#versus"); V.innerHTML="";
   V.appendChild(playerCard(me, true));
-  const vs=document.createElement("div"); vs.className="vs"; vs.textContent="VS"; V.appendChild(vs);
+  const vs=document.createElement("div"); vs.className="vs"; vs.innerHTML=icon('vs',34); V.appendChild(vs);
   V.appendChild(playerCard(opp || {name:"En attente…", xp:0, tokens:0}, false));
 
   // classement avec rangs
@@ -625,13 +692,13 @@ async function renderDash(){
     `<div class="mine" style="width:${mine}%"></div><div class="theirs" style="width:${100-mine}%"></div>`;
 
   $("#token-hint").innerHTML =
-    `🪙 Prochain jeton challenge dans <b>${state.me.next_token_in}</b> XP (1 jeton / 50 XP de record).`;
+    `${icon('jeton',16)} Prochain jeton challenge dans <b>${state.me.next_token_in}</b> XP (1 jeton / 50 XP de record).`;
 
   const F=$("#feed"); F.innerHTML="";
   if(!feed.length){ F.innerHTML='<li class="empty">Rien pour l\'instant — lance-toi !</li>'; }
   feed.forEach(e=>{
     const li=document.createElement("li");
-    const span=document.createElement("span"); span.textContent=e.text;
+    const span=document.createElement("span"); span.innerHTML=iconifyText(e.text);
     const tm=document.createElement("time"); tm.textContent=fmtTime(e.created_at);
     li.append(span,tm); F.appendChild(li);
   });
@@ -642,11 +709,11 @@ function playerCard(p, isMe){
   const prog = r.next
     ? `<div class="rk-bar"><div style="width:${Math.round(r.progress*100)}%"></div></div>
        <div class="rk-next small muted">plus que <b>${Math.round(r.toNext)}</b> XP pour ${escapeHtml(r.next.name)}</div>`
-    : `<div class="rk-next small muted">Rang max 🏆</div>`;
-  d.innerHTML=`<div class="name">${isMe?"🟦":"⬜"} ${escapeHtml(p.name)}${isMe?" <span class='small muted'>(toi)</span>":""}</div>
+    : `<div class="rk-next small muted">Rang max</div>`;
+  d.innerHTML=`<div class="name">${icon('joueur',20)} ${escapeHtml(p.name)}${isMe?" <span class='small muted'>(toi)</span>":""}</div>
     <div class="rk-row">${rankImg(r,56)}<span class="rk-name" style="color:${r.text}">${r.name}</span></div>
     <div class="xp">${Math.round(p.xp)}<span class="small muted" style="font-weight:600"> XP</span></div>
-    <div class="meta">🪙 ${p.tokens||0} jeton(s)</div>
+    <div class="meta">${icon('jeton',16)} ${p.tokens||0} jeton(s)</div>
     ${prog}`;
   return d;
 }
@@ -818,7 +885,7 @@ function resultBox(r, a){
   box.className="result "+(r.outcome?"pass":"fail");
   const top=document.createElement("div");
   top.innerHTML=`<span class="score-ring">${r.score}/6</span>
-     <span style="font-weight:700;margin-left:10px">${r.outcome?"Réussi ✅":"Raté ❌"}</span>
+     <span style="font-weight:700;margin-left:10px">${r.outcome?"Réussi "+icon('validation',16):"Raté ❌"}</span>
      <span class="small muted" style="margin-left:10px">${r.mastery>=0?"+":""}${r.mastery} XP</span>`;
   const just=document.createElement("p"); just.style.margin="10px 0 0"; just.style.fontSize="14px"; just.textContent=r.justification;
   box.append(top, just);
@@ -865,9 +932,9 @@ async function renderChallenge(){
     if(qc){ const q=document.createElement("span"); q.className="small muted"; q.textContent=`il s'est dit sûr à ${qc.label}`; h.append(q); }
     const btn=document.createElement("button"); btn.className="btn primary sm"; btn.style.marginTop="10px";
     if(c.challenged){ btn.textContent="Challenge déjà en cours"; btn.disabled=true; }
-    else if(state.me.tokens<1){ btn.textContent="Défier (1 🪙)"; btn.disabled=true; }
+    else if(state.me.tokens<1){ btn.innerHTML="Défier (1 "+icon('jeton',15)+")"; btn.disabled=true; }
     else{
-      btn.textContent="Défier (1 🪙)";
+      btn.innerHTML="Défier (1 "+icon('jeton',15)+")";
       btn.onclick=async()=>{
         btn.disabled=true;
         try{
@@ -904,8 +971,8 @@ async function renderDuels(){
   duels.forEach(d=>{
     const row=document.createElement("div"); row.className="aud";
     const status = d.status==="done"
-      ? (d.winner ? `🏆 ${escapeHtml(d.winner)} gagne` : "🤝 Nul")
-      : (d.my_remaining>0 ? `⏳ ${d.my_remaining} carte(s) à faire (onglet Audits)` : "⏳ En attente de ton pote");
+      ? (d.winner ? `${icon('recompense',16)} ${escapeHtml(d.winner)} gagne` : "🤝 Nul")
+      : (d.my_remaining>0 ? `${icon('attente',16)} ${d.my_remaining} carte(s) à faire (onglet Audits)` : `${icon('attente',16)} En attente de ton pote`);
     row.innerHTML=`<div class="head">
         <span class="kindtag">${escapeHtml(d.course)}</span>
         <span class="small muted">${escapeHtml(d.challenger)} vs ${escapeHtml(d.opponent)}</span>
