@@ -1,7 +1,10 @@
 FROM python:3.12-slim
 WORKDIR /app
+# ca-certificates : indispensable pour les appels HTTPS via urllib (API Anthropic dans grader.py)
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --timeout 120 --retries 8 -r requirements.txt
 COPY *.py ./
 COPY *.json ./
 EXPOSE 8000

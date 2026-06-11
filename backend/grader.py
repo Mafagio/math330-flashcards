@@ -12,7 +12,7 @@ système ordonne d'IGNORER toute instruction présente dans la réponse.
 
 from __future__ import annotations
 import os, json, re
-import httpx
+import urllib.request, urllib.error  # stdlib : pas de dépendance httpx/httpcore
 
 API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
 # Mets un modèle auquel TU as accès (voir https://docs.claude.com).
@@ -73,25 +73,26 @@ def grade(front: str, back: str, bareme: dict, answer: str) -> dict:
         return _stub_grade(back, bareme, answer)
 
     try:
-        r = httpx.post(
+        body = json.dumps({
+            "model": GRADER_MODEL,
+            "max_tokens": 600,
+            "system": SYSTEM,
+            "messages": [
+                {"role": "user", "content": _user_prompt(front, back, bareme, answer)}
+            ],
+        }).encode("utf-8")
+        req = urllib.request.Request(
             "https://api.anthropic.com/v1/messages",
+            data=body,
             headers={
                 "x-api-key": API_KEY,
                 "anthropic-version": "2023-06-01",
                 "content-type": "application/json",
             },
-            json={
-                "model": GRADER_MODEL,
-                "max_tokens": 600,
-                "system": SYSTEM,
-                "messages": [
-                    {"role": "user", "content": _user_prompt(front, back, bareme, answer)}
-                ],
-            },
-            timeout=60.0,
+            method="POST",
         )
-        r.raise_for_status()
-        data = r.json()
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
         text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
         out = _parse_json(text)
         score = int(out.get("score", 0))
