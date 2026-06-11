@@ -1870,5 +1870,1331 @@
         }
       ]
     }
+  },
+  {
+    "id": "ts-s1-1",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Soit $X_t$ de loi de Student à un degré de liberté, indépendamment selon $t$. La suite $\\{X_t\\}$ est-elle faiblement stationnaire ?",
+    "back": "Avec un degré de liberté, $X_t$ suit une loi de Cauchy standard : son espérance et sa variance ne sont pas définies. Comme la stationnarité faible exige une moyenne et une variance finies (constantes), $\\{X_t\\}$ n'est pas faiblement stationnaire.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Identifier que $X_t$ suit une loi de Cauchy standard (Student à 1 ddl)",
+          "weight": 2
+        },
+        {
+          "label": "Constater que moyenne et variance ne sont pas définies",
+          "weight": 2
+        },
+        {
+          "label": "Conclure correctement à la non-stationnarité faible",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s1-2",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit $\\{X_t\\}$ stationnaire au second ordre d'autocovariance $\\gamma(\\tau)$, et $\\varepsilon_t$ iid de variance finie. On suppose $\\{X_t\\}$ et $\\{\\varepsilon_t\\}$ mutuellement indépendants. Déterminer l'autocovariance de $Z_t = X_t + \\varepsilon_t$.",
+    "back": "Par indépendance, $\\mathrm{Cov}(X_t,\\varepsilon_{t+\\tau})=\\mathrm{Cov}(\\varepsilon_t,X_{t+\\tau})=0$. Comme les $\\varepsilon_t$ sont iid, $\\mathrm{Cov}(\\varepsilon_t,\\varepsilon_{t+\\tau})=\\mathrm{Var}(\\varepsilon_t)$ si $\\tau=0$, et $0$ sinon. Donc $\\mathrm{Cov}(Z_t,Z_{t+\\tau})=\\gamma_X(\\tau)+\\mathrm{Cov}(\\varepsilon_t,\\varepsilon_{t+\\tau})$, c'est-à-dire $\\gamma_Z(0)=\\mathrm{Var}(X_t)+\\mathrm{Var}(\\varepsilon_t)$ et $\\gamma_Z(\\tau)=\\gamma(\\tau)$ pour $\\tau\\neq 0$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Annuler les covariances croisées entre $X$ et $\\varepsilon$ par indépendance",
+          "weight": 2
+        },
+        {
+          "label": "Calculer l'autocovariance du bruit iid ($\\sigma^2$ en $\\tau=0$, $0$ sinon)",
+          "weight": 2
+        },
+        {
+          "label": "Donner $\\gamma_Z(\\tau)$ par cas via la bilinéarité",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s1-3",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Soit $Y_t$ iid gaussiennes de moyenne $0$ et variance $\\sigma_Y^2$, et $a,b,c$ des constantes. Parmi les processus suivants, lesquels sont faiblement / fortement stationnaires ? Le cas échéant, donner moyenne et ACVS : (1) $X_t=a+bY_t+cY_{t-1}$ ; (2) $X_t=a+bY_0$ ; (3) $X_t=Y_1\\cos(ct)+Y_2\\sin(ct)$ ; (4) $X_t=Y_0\\cos(ct)$.",
+    "back": "(1) $E[X_t]=a$ ; $\\gamma(0)=(b^2+c^2)\\sigma_Y^2$, $\\gamma(\\pm1)=bc\\,\\sigma_Y^2$, $0$ sinon : faiblement et (combinaison gaussienne) fortement stationnaire. (2) $E[X_t]=a$, $\\gamma(\\tau)=b^2\\sigma_Y^2$ : faiblement et fortement stationnaire. (3) $E[X_t]=0$, $\\gamma(\\tau)=\\cos(c\\tau)\\sigma_Y^2$ (indépendant de $t$) : faiblement et fortement stationnaire. (4) $E[X_t]=0$ mais $\\mathrm{Cov}(X_t,X_{t+\\tau})=\\cos(ct)\\cos\\{c(t+\\tau)\\}\\sigma_Y^2$ dépend de $t$ : non stationnaire.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Cas (1) et (2) : moyennes et ACVS corrects, conclusion stationnaire",
+          "weight": 2
+        },
+        {
+          "label": "Cas (3) : simplification trigonométrique en $\\cos(c\\tau)\\sigma_Y^2$ indépendante de $t$",
+          "weight": 2
+        },
+        {
+          "label": "Cas (4) : montrer la dépendance en $t$ donc non-stationnarité",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s1-4",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Déterminer l'autocovariance de $\\varepsilon_t$, non corrélé selon $t$, de variance fixe $\\sigma^2$ et de moyenne nulle.",
+    "back": "Le processus étant non corrélé et centré, $\\gamma_\\varepsilon(\\tau)=\\sigma^2$ si $\\tau=0$ et $\\gamma_\\varepsilon(\\tau)=0$ si $\\tau\\neq 0$ (bruit blanc).",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Donner $\\gamma_\\varepsilon(0)=\\sigma^2$",
+          "weight": 2
+        },
+        {
+          "label": "Donner $\\gamma_\\varepsilon(\\tau)=0$ pour $\\tau\\neq 0$",
+          "weight": 2
+        },
+        {
+          "label": "Justifier via l'absence de corrélation et la moyenne nulle",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s1-5",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Déterminer l'autocovariance de $X_t=\\theta_1\\varepsilon_t+\\theta_2\\varepsilon_{t-1}$, où $\\varepsilon_t$ est centré, non corrélé selon $t$, de variance fixe $\\sigma^2$ (processus MA(1)).",
+    "back": "Par bilinéarité et $\\mathrm{Cov}(\\varepsilon_t,\\varepsilon_{t+\\tau})=\\sigma^2\\mathbf{1}_{\\{\\tau=0\\}}$ : $\\gamma_X(0)=(\\theta_1^2+\\theta_2^2)\\sigma^2$, $\\gamma_X(\\pm1)=\\theta_1\\theta_2\\sigma^2$, et $\\gamma_X(\\tau)=0$ pour $|\\tau|\\geq 2$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Développer $\\gamma_X(\\tau)$ par bilinéarité de la covariance",
+          "weight": 2
+        },
+        {
+          "label": "Calculer $\\gamma_X(0)=(\\theta_1^2+\\theta_2^2)\\sigma^2$",
+          "weight": 2
+        },
+        {
+          "label": "Calculer $\\gamma_X(\\pm1)=\\theta_1\\theta_2\\sigma^2$ et $0$ au-delà",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s1-6",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soient $\\{X_t\\}$ et $\\{Y_t\\}$ deux séries stationnaires non corrélées (i.e. $X_t$ et $Y_s$ non corrélés pour tous $t,s$). Montrer que $\\{X_t+Y_t\\}$ est stationnaire, d'autocovariance égale à la somme des autocovariances de $\\{X_t\\}$ et $\\{Y_t\\}$.",
+    "back": "Trois conditions : (i) $E[X_t+Y_t]=E[X_t]+E[Y_t]$ est constante. (ii) $\\mathrm{Var}(X_t+Y_t)=\\mathrm{Var}(X_t)+2\\mathrm{Cov}(X_t,Y_t)+\\mathrm{Var}(Y_t)=\\mathrm{Var}(X_t)+\\mathrm{Var}(Y_t)<\\infty$ (covariance croisée nulle). (iii) Par bilinéarité, $\\mathrm{Cov}(X_t+Y_t,X_{t+\\tau}+Y_{t+\\tau})=\\gamma_X(\\tau)+\\gamma_Y(\\tau)$, car les termes croisés s'annulent. Donc $\\{X_t+Y_t\\}$ est faiblement stationnaire d'autocovariance $\\gamma_X(\\tau)+\\gamma_Y(\\tau)$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Moyenne constante de la somme",
+          "weight": 2
+        },
+        {
+          "label": "Variance finie en annulant la covariance croisée",
+          "weight": 2
+        },
+        {
+          "label": "Autocovariance $=\\gamma_X(\\tau)+\\gamma_Y(\\tau)$ via bilinéarité (indépendante de $t$)",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s1-7",
+    "course": "Time Series",
+    "category": "Série 1",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soient $\\{X_{t,1}\\},\\dots,\\{X_{t,m}\\}$ des processus stationnaires centrés d'autocovariances $\\gamma_j(\\tau)=\\mathrm{Cov}(X_{t,j},X_{t+\\tau,j})$. Si $E[X_{t,j}X_{t+\\tau,k}]=0$ pour tous $t,\\tau$ et $j\\neq k$, déterminer l'autocovariance de $X_t=\\sum_{j=1}^{m}X_{t,j}$.",
+    "back": "Comme les processus sont centrés, $\\mathrm{Cov}(X_{t,j},X_{t+\\tau,k})=E[X_{t,j}X_{t+\\tau,k}]=\\gamma_j(\\tau)$ si $j=k$ et $0$ sinon. Par bilinéarité, $\\gamma_X(\\tau)=\\sum_{j=1}^{m}\\sum_{k=1}^{m}\\mathrm{Cov}(X_{t,j},X_{t+\\tau,k})=\\sum_{j=1}^{m}\\gamma_j(\\tau)$. La double somme se réduit à la diagonale (matrice de covariances nulle hors diagonale).",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Exprimer les covariances croisées comme $\\gamma_j(\\tau)\\mathbf{1}_{\\{j=k\\}}$",
+          "weight": 2
+        },
+        {
+          "label": "Développer $\\gamma_X(\\tau)$ en double somme par bilinéarité",
+          "weight": 2
+        },
+        {
+          "label": "Réduire à $\\sum_{j=1}^m \\gamma_j(\\tau)$ (termes hors diagonale nuls)",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s3-1",
+    "course": "Time Series",
+    "category": "Série 3",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Trouver les coefficients $\\psi_j$, $j=0,1,2,\\dots$ de la représentation $X_t=\\sum_{j=0}^{\\infty}\\psi_j\\varepsilon_{t-j}$ du processus ARMA $(1-0.5B+0.04B^2)X_t=(1+0.25B)\\varepsilon_t$, où $\\varepsilon_t$ est un bruit blanc.",
+    "back": "On écrit $X_t=\\dfrac{1+0.25B}{1-0.5B+0.04B^2}\\varepsilon_t$. Le dénominateur se factorise via ses racines $B=2.5$ et $B=10$, puis on décompose en éléments simples et on développe chaque facteur en série géométrique ($\\sum_j 0.4^j B^j$ et $\\sum_j 0.1^j B^j$). En regroupant, on obtient $\\psi_0=1$ et, pour $j\\geq 1$, $\\psi_j=\\dfrac{13}{6}\\,0.4^{j}-\\dfrac{7}{6}\\,0.1^{j}$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Inverser l'opérateur AR : factoriser le dénominateur et décomposer en éléments simples",
+          "weight": 2
+        },
+        {
+          "label": "Développer en séries géométriques ($0.4^j$ et $0.1^j$) en incluant le numérateur MA",
+          "weight": 2
+        },
+        {
+          "label": "Conclure $\\psi_0=1$ et $\\psi_j=\\tfrac{13}{6}0.4^{j}-\\tfrac{7}{6}0.1^{j}$ pour $j\\geq 1$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s3-2",
+    "course": "Time Series",
+    "category": "Série 3",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Soit $Y_t$ un ARMA causal et inversible $\\phi(B)Y_t=\\theta(B)\\varepsilon_t$. On pose $\\tilde\\phi(B)=\\phi(B)\\theta^{-1}(B)$ et $a(B)=(\\tilde\\phi(B))^{-1}=\\sum_{j=0}^{\\infty}a_j B^j$. Déterminer la représentation de $Y_t$ en fonction de $\\varepsilon_t$, d'abord pour un AR(1) stationnaire, puis pour un AR(2) stationnaire.",
+    "back": "AR(1) $(1-\\phi B)Y_t=\\varepsilon_t$ : par causalité $Y_t=\\sum_{k=0}^{\\infty}\\phi^k\\varepsilon_{t-k}$. AR(2) $(1-\\phi_1 B-\\phi_2 B^2)Y_t=\\varepsilon_t$ : on factorise $\\Phi(z)=(1-g_1 z)(1-g_2 z)$ avec $|g_1|,|g_2|<1$. Le produit de Cauchy donne $Y_t=\\sum_{n=0}^{\\infty}\\big(\\sum_{k=0}^{n}g_1^k g_2^{n-k}\\big)\\varepsilon_{t-n}$. Pour $g_1\\neq g_2$, $\\sum_{k=0}^n g_1^k g_2^{n-k}=\\dfrac{g_1^{n+1}-g_2^{n+1}}{g_1-g_2}$, soit $Y_t=\\dfrac{g_1}{g_1-g_2}\\sum_n g_1^n\\varepsilon_{t-n}-\\dfrac{g_2}{g_1-g_2}\\sum_n g_2^n\\varepsilon_{t-n}$ ; et $\\sum_{k=0}^n g_1^k g_2^{n-k}=(n+1)g_1^n$ si $g_1=g_2$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "AR(1) : représentation $Y_t=\\sum_k \\phi^k\\varepsilon_{t-k}$ par causalité",
+          "weight": 2
+        },
+        {
+          "label": "AR(2) : factoriser $\\Phi(z)$ et appliquer le produit de Cauchy",
+          "weight": 2
+        },
+        {
+          "label": "Sommer la série géométrique (cas $g_1\\neq g_2$ et $g_1=g_2$)",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s3-3",
+    "course": "Time Series",
+    "category": "Série 3",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit l'AR(2) ($\\varepsilon_t$ gaussien) : $\\frac{15}{16}Y_t=\\frac14 Y_{t-1}-\\frac{1}{16}Y_{t-2}+\\varepsilon_t$, $t=0,1,2,\\dots$. Écrire le polynôme caractéristique AR associé. Le processus est-il stationnaire ? Est-il inversible ?",
+    "back": "Sous forme backshift $\\Phi(B)Y_t=\\varepsilon_t$ avec $\\Phi(B)=\\frac{15}{16}-\\frac14 B+\\frac{1}{16}B^2$. Les racines de $\\Phi(z)$ sont $2\\pm 3.3166\\,i$ (module $\\approx\\sqrt{4+11}=\\sqrt{15}>1$), donc toutes deux hors du cercle unité : le processus est stationnaire. Un processus AR (pur) est toujours inversible.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Écrire correctement le polynôme caractéristique $\\Phi(B)$",
+          "weight": 2
+        },
+        {
+          "label": "Calculer les racines et vérifier $|z|>1$ : stationnaire",
+          "weight": 2
+        },
+        {
+          "label": "Conclure qu'un AR est toujours inversible",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s3-4",
+    "course": "Time Series",
+    "category": "Série 3",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit l'ARMA(2,1) : $Y_t-\\frac14 Y_{t-1}+\\frac{1}{16}Y_{t-2}=\\varepsilon_t-0.5\\varepsilon_{t-1}$, $t=0,1,2,\\dots$. Le processus est-il stationnaire ? Est-il inversible ?",
+    "back": "Sous forme backshift : $\\big(1-\\frac14 B+\\frac{1}{16}B^2\\big)Y_t=(1-0.5B)\\varepsilon_t$. Polynôme AR $\\Phi(z)=z^2-4z+16$ de racines $z=2\\pm 2\\sqrt3\\,i$ (module $4>1$), et polynôme MA $\\Omega(z)=1-\\frac12 z$ de racine $z=2>1$. Les racines AR et MA étant toutes hors du cercle unité, le processus est stationnaire et inversible.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Écrire les polynômes AR et MA en backshift",
+          "weight": 2
+        },
+        {
+          "label": "Racines AR $2\\pm2\\sqrt3 i$ hors cercle unité : stationnaire",
+          "weight": 2
+        },
+        {
+          "label": "Racine MA $z=2$ hors cercle unité : inversible",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s3-5",
+    "course": "Time Series",
+    "category": "Série 3",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Soit $\\{U_t\\}$ stationnaire centré. On pose $X_t=(1-0.4B)U_t$ et $W_t=(1-2.5B)U_t$. (a) Exprimer les ACF de $\\{X_t\\}$ et $\\{W_t\\}$ en fonction de celle de $\\{U_t\\}$. (b) Montrer que $\\{X_t\\}$ et $\\{W_t\\}$ ont la même ACF. (c) Montrer que $\\varepsilon_t=-\\sum_{j=1}^{\\infty}(0.4)^j X_{t+j}$ vérifie $\\varepsilon_t-2.5\\varepsilon_{t-1}=X_t$.",
+    "back": "(a) $\\gamma_X(\\tau)=1.16\\gamma_U(\\tau)-0.4\\gamma_U(\\tau-1)-0.4\\gamma_U(\\tau+1)$, d'où $\\rho_X(\\tau)=\\dfrac{1.16\\rho_U(\\tau)-0.4\\rho_U(\\tau-1)-0.4\\rho_U(\\tau+1)}{1.16-0.8\\rho_U(1)}$ ; de même $\\rho_W(\\tau)=\\dfrac{7.25\\rho_U(\\tau)-2.5\\rho_U(\\tau-1)-2.5\\rho_U(\\tau+1)}{7.25-5\\rho_U(1)}$. (b) En factorisant $6.25$ au numérateur et au dénominateur de $\\rho_W$, on retrouve exactement $\\rho_X(\\tau)$. (c) En décalant l'indice, $\\varepsilon_t-2.5\\varepsilon_{t-1}=-\\sum_{j\\geq1}0.4^j X_{t+j}+\\sum_{j\\geq1}0.4^j X_{t+j}+X_t=X_t$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "(a) Calculer $\\gamma_X$, $\\gamma_W$ et en déduire $\\rho_X$, $\\rho_W$",
+          "weight": 2
+        },
+        {
+          "label": "(b) Montrer $\\rho_W(\\tau)=\\rho_X(\\tau)$ par factorisation",
+          "weight": 2
+        },
+        {
+          "label": "(c) Vérifier $\\varepsilon_t-2.5\\varepsilon_{t-1}=X_t$ par décalage d'indice télescopique",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s4-1",
+    "course": "Time Series",
+    "category": "Série 4",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "On considère les nombres de taches solaires de Wolfer. Déterminer les autocovariances empiriques $\\hat\\gamma(\\tau)$ aux retards $\\tau = 0, 1, 2, 3$. En déduire les estimateurs de Yule-Walker de $\\phi_1$, $\\phi_2$ et $\\sigma_\\varepsilon^2$ dans le modèle $Y_t = \\phi_1 Y_{t-1} + \\phi_2 Y_{t-2} + \\varepsilon_t$, où $Y_t$ est la série centrée et $\\varepsilon_t$ un bruit blanc centré.",
+    "back": "Avec la fonction acf de R on obtient $\\hat\\gamma(0)=1382.19$, $\\hat\\gamma(1)=1114.38$, $\\hat\\gamma(2)=591.72$, $\\hat\\gamma(3)=96.22$. On résout $\\hat\\phi = \\hat\\Gamma^{-1}\\hat\\gamma$ avec $\\hat\\Gamma = \\begin{pmatrix}\\hat\\gamma(0) & \\hat\\gamma(1)\\\\ \\hat\\gamma(1) & \\hat\\gamma(0)\\end{pmatrix}$ et $\\hat\\gamma = (\\hat\\gamma(1),\\hat\\gamma(2))^\\top$, d'où $\\hat\\phi_1 \\approx 1.3175$, $\\hat\\phi_2 \\approx -0.6341$. Enfin $\\hat\\sigma_\\varepsilon^2 = \\hat\\gamma(0) - \\hat\\phi_1\\hat\\gamma(1) - \\hat\\phi_2\\hat\\gamma(2) \\approx 289.21$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Autocovariances empiriques aux retards 0 à 3",
+          "weight": 2
+        },
+        {
+          "label": "Résolution du système de Yule-Walker pour $\\phi_1,\\phi_2$",
+          "weight": 2
+        },
+        {
+          "label": "Estimation de $\\sigma_\\varepsilon^2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s4-2",
+    "course": "Time Series",
+    "category": "Série 4",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit $\\{Y_t\\}$ un processus stationnaire centré d'autocovariance $\\gamma$. Montrer que les valeurs $\\phi_1, \\dots, \\phi_k$ qui minimisent $\\mathbb{E}\\!\\left[\\left(Y_t - \\phi_1 Y_{t-1} - \\cdots - \\phi_k Y_{t-k}\\right)^2\\right]$ satisfont les équations de Yule-Walker $\\gamma(j) = \\phi_1\\gamma(j-1) + \\cdots + \\phi_k\\gamma(j-k)$ pour $j = 1, \\dots, k$.",
+    "back": "Comme $Y_t$ est centré, $\\mathbb{E}\\big[(Y_t - \\sum_i \\phi_i Y_{t-i})^2\\big] = \\mathrm{Var}(Y_t - \\sum_i \\phi_i Y_{t-i}) = \\gamma(0) - 2\\sum_{i=1}^k \\phi_i\\gamma(i) + \\sum_{i,j}\\phi_i\\phi_j\\gamma(i-j)$. C'est une forme quadratique positive : on dérive par rapport à $\\phi_i$ et on annule, $-2\\gamma(i) + 2\\sum_{j=1}^k \\phi_j\\gamma(i-j) = 0$, d'où $\\gamma(i) = \\sum_{j=1}^k \\phi_j\\gamma(i-j)$, soit les équations de Yule-Walker.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Développement de l'espérance et usage de la stationnarité/centrage",
+          "weight": 2
+        },
+        {
+          "label": "Expression quadratique en fonction des $\\gamma$",
+          "weight": 2
+        },
+        {
+          "label": "Dérivation et obtention des équations de Yule-Walker",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s4-3",
+    "course": "Time Series",
+    "category": "Série 4",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "On dispose d'observations d'un processus MA(1) centré $X_t = \\varepsilon_t - \\theta_1\\varepsilon_{t-1}$. On observe $X_1 = 0$, $X_2 = 1$, $X_3 = 0.5$. Estimer $\\theta$ par moindres carrés conditionnels.",
+    "back": "On prend $t=0$ comme instant initial et on récupère les innovations via $\\varepsilon_t = X_t + \\theta_1\\varepsilon_{t-1}$. Avec $\\varepsilon_0 = 0$ : $\\varepsilon_1 = X_1 + \\theta_1\\varepsilon_0 = 0$, $\\varepsilon_2 = X_2 + \\theta_1\\varepsilon_1 = 1$, $\\varepsilon_3 = X_3 + \\theta_1\\varepsilon_2 = 0.5 + \\theta_1$. On minimise $\\sum_{t=1}^3 \\varepsilon_t^2 = 0 + 1 + (0.5+\\theta_1)^2$, minimum atteint pour $\\hat\\theta = -0.5$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Récursion $\\varepsilon_t = X_t + \\theta_1\\varepsilon_{t-1}$ avec $\\varepsilon_0=0$",
+          "weight": 2
+        },
+        {
+          "label": "Calcul des innovations $\\varepsilon_1,\\varepsilon_2,\\varepsilon_3$",
+          "weight": 2
+        },
+        {
+          "label": "Minimisation de $\\sum \\varepsilon_t^2$ et $\\hat\\theta=-0.5$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s4-4",
+    "course": "Time Series",
+    "category": "Série 4",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "À partir d'une série de longueur 100, on a calculé l'ACF $\\rho(1) = 0.8$, $\\rho(2) = 0.5$, $\\rho(3) = 0.4$. En supposant qu'un modèle AR(3) centré convient, obtenir les estimations de $\\phi_1$, $\\phi_2$ et $\\phi_3$.",
+    "back": "Par Yule-Walker, $\\hat\\phi = \\hat\\Gamma^{-1}\\hat\\gamma$ avec $\\Gamma = \\begin{pmatrix}\\gamma_0 & \\gamma_1 & \\gamma_2\\\\ \\gamma_1 & \\gamma_0 & \\gamma_1\\\\ \\gamma_2 & \\gamma_1 & \\gamma_0\\end{pmatrix}$. En divisant par $\\gamma_0$ on peut écrire $\\hat\\phi = \\bar\\Gamma^{-1}\\rho$ où $\\bar\\Gamma$ est remplie des autocorrélations $\\rho(\\tau)$. Avec $\\rho = (0.8, 0.5, 0.4)^\\top$ on obtient $\\hat\\phi = (1.3091,\\ -0.9545,\\ 0.5091)^\\top$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Système de Yule-Walker en autocorrélations $\\hat\\phi = \\bar\\Gamma^{-1}\\rho$",
+          "weight": 2
+        },
+        {
+          "label": "Construction de la matrice de Toeplitz $\\bar\\Gamma$",
+          "weight": 2
+        },
+        {
+          "label": "Résolution numérique $\\hat\\phi=(1.309,-0.955,0.509)$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s4-5",
+    "course": "Time Series",
+    "category": "Série 4",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "On considère les données de taches solaires de Wolfer. Calculer l'estimateur des moindres carrés \"forward\" (en avant) pour un modèle AR(2). Faire de même pour l'estimateur \"backward\" (en arrière). Penser à retirer la moyenne si elle est significativement non nulle.",
+    "back": "On centre la série puis on régresse par moindres carrés ordinaires $\\hat\\phi = (M^\\top M)^{-1}M^\\top X$ où $M$ est la matrice des régresseurs retardés (sens avant pour $\\hat\\phi_F$, sens arrière pour $\\hat\\phi_B$). Numériquement : $\\hat\\phi_F \\approx (1.4046,\\ -0.7113)^\\top$ avec $\\hat\\sigma_F^2 \\approx 232.26$, et $\\hat\\phi_B \\approx (1.4061,\\ -0.7076)^\\top$ avec $\\hat\\sigma_B^2 \\approx 231.03$. Les deux estimateurs sont très proches.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Centrage et mise en place de la régression LS",
+          "weight": 2
+        },
+        {
+          "label": "Estimateur forward $\\hat\\phi_F$ et $\\hat\\sigma_F^2$",
+          "weight": 2
+        },
+        {
+          "label": "Estimateur backward $\\hat\\phi_B$ et $\\hat\\sigma_B^2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s5-1",
+    "course": "Time Series",
+    "category": "Série 5",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit $\\{X_t\\}$ un processus ARIMA$(p, d, q)$ vérifiant $\\phi(B)(I - B)^d X_t = \\theta(B) Z_t$, où $Z_t$ est un bruit blanc. Montrer que les mêmes équations sont satisfaites par $W_t = X_t + A_0 + A_1 t + \\cdots + A_{d-1}t^{d-1}$, où les $A_j$ sont des variables aléatoires indépendantes.",
+    "back": "L'opérateur $(I-B)$ est linéaire et $(I-B)\\mathbf{0} = \\mathbf{0}$. Par linéarité, $(I-B)^d W_t = (I-B)^d X_t + \\sum_{k=1}^{d} A_{k-1}(I-B)^d t^{k-1}$. Il suffit de montrer $(I-B)^k t^{k-1} = 0$ pour tout $k$. Par récurrence : pour $k=1$, $(I-B)\\mathbf{1} = \\mathbf{0}$ ; et $(I-B)^{k+1}t^k = (I-B)^k\\big(t^k - (t-1)^k\\big)$ dont le terme en $t^k$ s'annule, le reste étant un polynôme de degré $\\le k-1$ traité par hypothèse de récurrence. Donc $(I-B)^d W_t = (I-B)^d X_t$ et les équations sont préservées.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Linéarité de $(I-B)$ et décomposition de $(I-B)^d W_t$",
+          "weight": 2
+        },
+        {
+          "label": "Réduction au lemme $(I-B)^k t^{k-1}=0$",
+          "weight": 2
+        },
+        {
+          "label": "Preuve par récurrence sur $k$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s5-2",
+    "course": "Time Series",
+    "category": "Série 5",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "On observe $U_t$ suivant un modèle SARMA$(1,2)\\times(0,1)_4$. Écrire les équations qui spécifient $U_t$ en fonction du passé. Déterminer les poids $\\psi_j$ de la représentation MA infinie $U_t = \\sum_{j=0}^\\infty \\psi_j \\varepsilon_{t-j}$. On pourra exprimer $\\psi_j$ en fonction de $\\psi_{j-1}$ pour simplifier l'algèbre.",
+    "back": "Le modèle s'écrit $(1-\\phi B)X_t = (1-\\theta_1 B - \\theta_2 B^2)(1-\\Theta B^4)\\varepsilon_t$, soit $X_t = \\phi X_{t-1} + (1-\\theta_1 B - \\theta_2 B^2)(1-\\Theta B^4)\\varepsilon_t$. En développant $\\frac{1}{1-\\phi B} = \\sum_l (\\phi B)^l$ on obtient les $\\psi_l$. Premiers termes : $\\psi_0 = 1$, $\\psi_1 = \\phi - \\theta_1$, $\\psi_2 = \\phi^2 - \\theta_1\\phi - \\theta_2$, $\\psi_3 = \\phi\\psi_2$. Au retard saisonnier : $\\psi_4 = \\phi^4 - \\theta_1\\phi^3 - \\theta_2\\phi^2 - \\Theta = \\phi\\psi_3 - \\Theta$. Pour $l \\ge 6$ : $\\psi_l = (\\phi^l - \\theta_1\\phi^{l-1} - \\theta_2\\phi^{l-2}) - \\Theta(\\phi^{l-4} - \\theta_1\\phi^{l-5} - \\theta_2\\phi^{l-6})$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Écriture du modèle SARMA et passage à la forme MA($\\infty$)",
+          "weight": 2
+        },
+        {
+          "label": "Calcul des premiers poids $\\psi_0,\\dots,\\psi_4$",
+          "weight": 2
+        },
+        {
+          "label": "Formule générale/récursion pour $\\psi_l$, $l\\ge 6$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s5-3",
+    "course": "Time Series",
+    "category": "Série 5",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "On étudie le processus saisonnier $(1 - 0.7B^2)X_t = (1 - 0.3B^2)\\varepsilon_t$, où $\\varepsilon_t$ est un bruit blanc de variance unité. (1) Trouver les coefficients $\\{a_j\\}$ de la représentation $X_t = \\sum_{j=0}^\\infty a_j\\varepsilon_{t-j}$. (2) Trouver les coefficients $\\{b_j\\}$ de $\\varepsilon_t = \\sum_{j=0}^\\infty b_j X_{t-j}$. (3) Trouver et représenter l'autocorrélation de $X_t$.",
+    "back": "Avec $\\phi=0.7$, $\\theta=0.3$, le polynôme $1-\\phi z^2$ n'a pas de racine sur le cercle unité (stationnaire). (1) $X_t = (1-\\theta B^2)\\sum_j (\\phi B^2)^j \\varepsilon_t$ : $a_j = 0$ pour $j$ impair, $a_0=1$, et pour $j\\ge 2$ pair $a_j = \\phi^{j/2} - \\phi^{(j-2)/2}\\theta$. (2) De même $b_j=0$ pour $j$ impair, $b_0=1$, et pour $j\\ge 2$ pair $b_j = \\theta^{j/2} - \\theta^{(j-2)/2}\\phi$. (3) $\\rho(\\tau) = \\frac{\\sum_j a_j a_{j+\\tau}}{\\sum_j a_j^2}$ : $\\rho(0)=1$, $\\rho(\\tau)=0$ pour $\\tau$ impair, et $\\rho(\\tau)$ décroît géométriquement en $\\phi^{\\tau/2}$ pour $\\tau$ pair.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Coefficients $a_j$ de la représentation MA($\\infty$)",
+          "weight": 2
+        },
+        {
+          "label": "Coefficients $b_j$ de la représentation AR($\\infty$)",
+          "weight": 2
+        },
+        {
+          "label": "Autocorrélation $\\rho(\\tau)$ et sa visualisation",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s6-1",
+    "course": "Time Series",
+    "category": "Série 6",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit $g \\in L^1$ de transformée de Fourier $G$, et soit $H$ la transformée de Fourier de $h$. Démontrer les relations suivantes. (1) Si $h(t) = g(t)^*$ pour tout $t \\in \\mathbb{R}$, alors $H(f) = G(-f)^*$. (2) Si $h(t) = g(\\alpha t)$, alors $H(f) = G(f/\\alpha)/|\\alpha|$. (3) Si $h(t) = g(t+\\tau)$, alors $H(f) = G(f)\\,e^{2\\pi i f \\tau}$. (4) Soit $p \\in L^1$ de transformée $P$ ; si $h(t) = \\alpha g(t) + p(t)$, alors $H(f) = \\alpha G(f) + P(f)$.",
+    "back": "Dans chaque cas on part de $H(f) = \\int_{-\\infty}^{\\infty} h(t)\\,e^{-2\\pi i t f}\\,dt$. (1) Avec $h(t)=g(t)^*$ : $H(f)=\\int g(t)^* e^{-2\\pi i t f}dt = \\big(\\int g(t)\\,e^{2\\pi i t f}dt\\big)^* = G(-f)^*$. (2) Avec $h(t)=g(\\alpha t)$ et le changement $t'=\\alpha t$ : $H(f)=\\int g(t')\\,e^{-2\\pi i (f/\\alpha) t'}\\tfrac{1}{|\\alpha|}dt' = G(f/\\alpha)/|\\alpha|$. (3) Avec $h(t)=g(t+\\tau)$, en posant $s=t+\\tau$ : $H(f)=\\int g(s)\\,e^{-2\\pi i f (s-\\tau)}ds = G(f)\\,e^{2\\pi i f \\tau}$. (4) Découle directement de la linéarité de l'intégrale.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Conjugaison et changement d'échelle (1)-(2)",
+          "weight": 2
+        },
+        {
+          "label": "Translation (3) via changement de variable",
+          "weight": 2
+        },
+        {
+          "label": "Linéarité (4) et rigueur des intégrales",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s6-2",
+    "course": "Time Series",
+    "category": "Série 6",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Démontrer la version en temps continu du théorème de convolution : soient $h, g \\in L^1$ et $u = g * h$. Montrer que $U = G \\cdot H$, où $U$, $G$, $H$ désignent les transformées de Fourier respectives de $u$, $g$, $h$.",
+    "back": "Pour tout $f \\in \\mathbb{R}$ : $U(f) = \\int_{-\\infty}^{\\infty} u(x)\\,e^{-2\\pi i x f}dx = \\int\\!\\!\\int g(x-y)h(y)\\,dy\\,e^{-2\\pi i x f}dx$. En intervertissant les intégrales et avec le changement $s = x-y$ : $U(f) = \\int g(s)\\,e^{-2\\pi i s f}ds \\int h(y)\\,e^{-2\\pi i y f}dy = G(f)H(f)$. L'interversion est justifiée par Fubini car $\\int\\!\\!\\int |g(s)h(y)|\\,ds\\,dy = \\big(\\int|g|\\big)\\big(\\int|h|\\big) < \\infty$ par hypothèse $g,h \\in L^1$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Écriture de $U(f)$ avec le produit de convolution",
+          "weight": 2
+        },
+        {
+          "label": "Interversion + changement de variable $\\to G(f)H(f)$",
+          "weight": 2
+        },
+        {
+          "label": "Justification de Fubini ($L^1$, intégrabilité)",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s6-3",
+    "course": "Time Series",
+    "category": "Série 6",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Démontrer le théorème de repliement (aliasing). Soit $g \\in L^1$ continue, $G$ sa transformée de Fourier en temps continu et $\\mathcal{G}$ la transformée de Fourier de la suite échantillonnée $\\{g(t)\\}_{t \\in \\Delta \\mathbb{Z}}$. En supposant $G \\in L^1$, $\\{g(t)\\}_{t\\in\\Delta\\mathbb{Z}} \\in \\ell^1$ et $\\{\\mathcal{G}(f + k/\\Delta)\\}_{k\\in\\mathbb{Z}} \\in \\ell^1$ pour tout $f$, montrer que $\\mathcal{G}(f) = \\sum_{k\\in\\mathbb{Z}} G(f + k/\\Delta)$.",
+    "back": "On utilise les formules d'inversion : pour $t \\in \\Delta\\mathbb{Z}$, $g(t) = \\int_{-\\infty}^{\\infty} G(f)\\,e^{2\\pi i f t}df = \\int_{-1/2\\Delta}^{1/2\\Delta} \\mathcal{G}(f)\\,e^{2\\pi i f t}df$. En découpant $\\mathbb{R}$ en intervalles $[k/\\Delta - 1/2\\Delta,\\, k/\\Delta + 1/2\\Delta]$ et en posant $f \\mapsto f + k/\\Delta$, comme $t = z\\Delta$ et $e^{2\\pi i (k/\\Delta) t} = 1$ : $g(t) = \\sum_k \\int_{-1/2\\Delta}^{1/2\\Delta} G(f + k/\\Delta)\\,e^{2\\pi i f t}df$. L'interversion somme/intégrale est licite ($\\ell^1$). On identifie donc $\\sum_k G(f+k/\\Delta) = \\mathcal{G}(f)$ p.p., puis partout par continuité des deux membres (assurée par les hypothèses $\\ell^1$).",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Formules d'inversion de Fourier",
+          "weight": 2
+        },
+        {
+          "label": "Découpage en bandes + périodicité $e^{2\\pi i k/\\Delta \\, t}=1$",
+          "weight": 2
+        },
+        {
+          "label": "Identification p.p. puis partout par continuité",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s7-1",
+    "course": "Time Series",
+    "category": "Série 7",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Soit $\\{\\varepsilon_t\\}_{t\\in\\mathbb{Z}}$ un bruit blanc de variance $\\sigma_\\varepsilon^2$. Déterminer sa densité spectrale.",
+    "back": "Le bruit blanc est non corrélé, donc son ACVS vaut $\\gamma(\\tau) = \\sigma_\\varepsilon^2$ si $\\tau = 0$ et $0$ sinon. La densité spectrale est la transformée de Fourier de l'ACVS : $S(f) = \\sum_{\\tau\\in\\mathbb{Z}} \\gamma(\\tau)\\,e^{-2\\pi i \\tau f} = \\sigma_\\varepsilon^2$ pour tout $f$. Elle est constante (spectre plat).",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "ACVS du bruit blanc ($\\gamma(0)=\\sigma_\\varepsilon^2$, sinon $0$)",
+          "weight": 2
+        },
+        {
+          "label": "Lien ACVS $\\to$ densité spectrale",
+          "weight": 2
+        },
+        {
+          "label": "Résultat $S(f) = \\sigma_\\varepsilon^2$ constant",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s7-2",
+    "course": "Time Series",
+    "category": "Série 7",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit la suite $\\gamma(\\tau) = 1$ si $|\\tau| \\le K$ et $\\gamma(\\tau) = 0$ si $|\\tau| > K$, où $K$ est un entier positif. La suite $\\gamma(\\tau)$ est-elle une ACVS d'un processus stationnaire à temps discret $\\{Y_t\\}$ ? Quelle serait alors la densité spectrale (SDF) ?",
+    "back": "On a $\\sum_\\tau |\\gamma(\\tau)| < \\infty$ et $\\gamma(\\tau) = \\gamma(-\\tau)$, donc on peut former $S(f) = \\sum_{\\tau=-K}^{K} e^{-2\\pi i \\tau f} = 1 + 2\\sum_{\\tau=1}^{K} \\cos(2\\pi\\tau f)$ (noyau de Dirichlet). Mais $S$ n'est pas positive pour tout $f$ : par exemple si $K = 2q+1$ est impair, $S(1/2) < 0$. Comme une densité spectrale doit vérifier $S(f) \\ge 0$, $\\gamma(\\tau)$ ne peut pas être l'ACVS d'un processus stationnaire.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Calcul de $S(f) = 1 + 2\\sum_{\\tau=1}^K \\cos(2\\pi\\tau f)$",
+          "weight": 2
+        },
+        {
+          "label": "Critère de positivité $S(f) \\ge 0$ d'une SDF",
+          "weight": 2
+        },
+        {
+          "label": "Contre-exemple ($K$ impair, $S(1/2)<0$) et conclusion",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s7-3",
+    "course": "Time Series",
+    "category": "Série 7",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Déterminer la fonction d'auto-covariance de $\\{X_t\\}_{t\\in\\mathbb{Z}}$ ayant pour densité spectrale $S(f) = \\dfrac{\\sigma^2}{\\pi}\\,(1 - 2|f|)\\,\\mathbf{1}(|f| \\le 1/2)$.",
+    "back": "On a $\\gamma(\\tau) = \\int_{-1/2}^{1/2} e^{2\\pi i f \\tau} S(f)\\,df$. Le terme en $\\sin$ étant impair et l'intégrande pair : $\\gamma(\\tau) = \\tfrac{2\\sigma^2}{\\pi}\\int_0^{1/2}\\cos(2\\pi f\\tau)(1-2f)\\,df$. Avec $I_1 = \\int_0^{1/2}\\cos(2\\pi f\\tau)df = \\tfrac{\\sin(\\pi\\tau)}{2\\pi\\tau}$ et $I_2 = \\int_0^{1/2}f\\cos(2\\pi f\\tau)df = \\tfrac{\\sin(\\pi\\tau)}{4\\pi\\tau} + \\tfrac{\\cos(\\pi\\tau)-1}{4\\pi^2\\tau^2}$, on obtient pour $\\tau \\ne 0$ : $\\gamma(\\tau) = \\dfrac{\\sigma^2}{\\pi^3}\\,\\dfrac{1 - \\cos(\\pi\\tau)}{\\tau^2}$. Pour $\\tau = 0$ : $\\gamma(0) = \\dfrac{\\sigma^2}{2\\pi}$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Mise en place $\\gamma(\\tau)=\\int e^{2\\pi i f\\tau}S(f)df$ et réduction par parité",
+          "weight": 2
+        },
+        {
+          "label": "Calcul des intégrales $I_1$ et $I_2$",
+          "weight": 2
+        },
+        {
+          "label": "Résultat final + cas $\\tau = 0$ ($\\gamma(0)=\\sigma^2/2\\pi$)",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s7-4",
+    "course": "Time Series",
+    "category": "Série 7",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Quelle est la densité spectrale d'un processus $\\mathrm{MA}(q)$ ?",
+    "back": "L'ACVS d'un $\\mathrm{MA}(q)$ s'écrit $\\gamma(\\tau) = \\sigma_\\varepsilon^2 \\sum_{j=0}^{q}\\sum_{k=0}^{q} \\theta_j\\theta_k\\,\\mathbf{1}_{\\tau = k-j}$ (avec $\\theta_0=1$, $\\theta_j = 0$ pour $j>q$), nulle pour $|\\tau|>q$. Comme $\\gamma \\in \\ell^1$, la densité spectrale existe : $S(f) = \\sum_{\\tau\\in\\mathbb{Z}} \\gamma(\\tau)\\,e^{-2\\pi i \\tau f} = \\sigma_\\varepsilon^2 \\sum_{j=0}^{q}\\sum_{k=0}^{q}\\theta_j\\theta_k\\,e^{-2\\pi i (k-j)f} = \\sigma_\\varepsilon^2 \\left| \\sum_{j=0}^{q} \\theta_j\\,e^{-2\\pi i j f} \\right|^2$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "ACVS du $\\mathrm{MA}(q)$ (forme double somme)",
+          "weight": 2
+        },
+        {
+          "label": "Transformée de Fourier de l'ACVS",
+          "weight": 2
+        },
+        {
+          "label": "Factorisation en $\\sigma_\\varepsilon^2 |\\sum_j \\theta_j e^{-2\\pi i j f}|^2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s7-5",
+    "course": "Time Series",
+    "category": "Série 7",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Considérer un processus harmonique à amplitude variable $X_t = \\epsilon_t \\cos(\\nu t + \\Theta)$, où $\\nu$ est fixé, $\\Theta$ est une phase aléatoire, et $\\epsilon_t$ est un bruit blanc centré de variance $\\sigma^2$ (non contraint d'être positif), indépendant de $\\Theta$. Contrairement au cas du cours où $\\Theta \\sim \\mathcal{U}[-\\pi,\\pi]$, supposer que $\\Theta$ a pour densité $f_\\Theta(\\theta) = \\tfrac{1}{2\\pi}(1 + \\cos\\theta)$ pour $|\\theta| \\le \\pi$. Déterminer les deux premiers moments de $X_t$. Sont-ils encore indépendants de $t$ ?",
+    "back": "Par indépendance de $\\epsilon_t$ et $\\Theta$ : $\\mathbb{E}[X_t] = \\mathbb{E}[\\epsilon_t]\\,\\mathbb{E}[\\cos(\\nu t + \\Theta)] = 0$ (car $\\mathbb{E}[\\epsilon_t]=0$), constant en $t$. Pour la covariance : $\\mathbb{E}[X_t X_{t+\\tau}] = \\mathbb{E}[\\epsilon_t\\epsilon_{t+\\tau}]\\,\\mathbb{E}[\\cos(\\nu t+\\Theta)\\cos(\\nu(t+\\tau)+\\Theta)]$. Avec $\\cos A\\cos B = \\tfrac12[\\cos(A-B)+\\cos(A+B)]$ : $\\mathbb{E}[\\cos(\\nu t+\\Theta)\\cos(\\nu(t+\\tau)+\\Theta)] = \\tfrac12[\\cos(\\nu\\tau) + \\mathbb{E}[\\cos(\\nu(2t+\\tau)+2\\Theta)]]$. Le terme $\\mathbb{E}[\\cos(\\nu(2t+\\tau)+2\\Theta)] = 0$ (les intégrales sur $[-\\pi,\\pi]$ s'annulent). Comme $\\epsilon_t$ est non corrélé, $\\mathbb{E}[\\epsilon_t\\epsilon_{t+\\tau}] = \\sigma^2$ si $\\tau=0$, $0$ sinon. Donc $\\mathbb{E}[X_t X_{t+\\tau}] = \\tfrac{\\sigma^2}{2}$ si $\\tau=0$ et $0$ sinon : les moments sont indépendants de $t$, donc $X_t$ est stationnaire.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Moyenne $\\mathbb{E}[X_t]=0$ par indépendance",
+          "weight": 2
+        },
+        {
+          "label": "Développement de la covariance et annulation du terme en $2\\Theta$",
+          "weight": 2
+        },
+        {
+          "label": "Résultat $\\gamma(\\tau)=\\sigma^2/2 \\cdot \\mathbf{1}_{\\tau=0}$ et stationnarité",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s8-1",
+    "course": "Time Series",
+    "category": "Série 8",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "On observe $X_t$ pour $t \\in T = \\{1,\\dots,n\\}$. Le périodogramme est défini par $\\hat{S}^{(p)}(f) = \\sum_{\\tau \\in \\mathbb{Z}} \\hat{\\gamma}_\\tau\\, e^{-2\\pi i f \\tau}$, où $\\hat{\\gamma}_\\tau = \\frac{1}{n}\\sum_{t=1}^{n-|\\tau|}(X_t-\\bar{X})(X_{t+|\\tau|}-\\bar{X})$ pour $|\\tau| \\le n-1$ et $0$ sinon. Montrer que $\\hat{S}^{(p)}(f) = |J(f)|^2$, où $J(f) = \\frac{1}{\\sqrt{n}}\\sum_{t \\in T}(X_t-\\bar{X})\\, e^{-2\\pi i t f}$.",
+    "back": "Posons $Y_t = X_t-\\bar{X}$. Alors $\\hat{S}^{(p)}(f) = \\sum_{\\tau=-n+1}^{n-1} \\frac{1}{n}\\sum_{t=1}^{n-|\\tau|} Y_t Y_{t+|\\tau|}\\, e^{-2\\pi i \\tau f}$. En posant $s = t+\\tau$ et en sommant librement sur $s,t \\in T$ (les termes hors de $T$ étant nuls), on obtient $\\hat{S}^{(p)}(f) = \\frac{1}{n}\\sum_{s=1}^{n}\\sum_{t=1}^{n} Y_t Y_s\\, e^{-2\\pi i s f} e^{2\\pi i t f} = \\big(\\frac{1}{\\sqrt{n}}\\sum_t Y_t e^{-2\\pi i t f}\\big)\\overline{(\\cdots)} = |J(f)|^2$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Substitution $Y_t=X_t-\\bar X$ et réécriture du périodogramme",
+          "weight": 2
+        },
+        {
+          "label": "Changement d'indice $s=t+\\tau$ et somme double sur $T$",
+          "weight": 2
+        },
+        {
+          "label": "Identification de la double somme à $|J(f)|^2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s8-2",
+    "course": "Time Series",
+    "category": "Série 8",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "On note $u = g * h$ la convolution $u_t = \\sum_{s\\in\\mathbb{Z}} g_{t-s} h_s$, et $V = G * H$ la convolution en fréquence $V(f) = \\int_{-1/2}^{1/2} G(f-f')H(f')\\,df'$. En supposant $g,h \\in \\ell^1$, démontrer : (a) $h\\cdot g \\in \\ell^1$ et $h*g \\in \\ell^1$ ; (b) $H \\in L^1$ (sur $[-1/2,1/2]$) ; (c) si $v_t = h_t g_t$, alors sa transformée de Fourier est $V = H * G$ ; (d) si $u = h*g$, alors sa transformée de Fourier est $U = H\\cdot G$.",
+    "back": "(a) $\\|h\\cdot g\\|_1 = \\sum_t |h_t g_t| \\le (\\sum_t|h_t|)(\\sum_s|g_s|) = \\|h\\|_1\\|g\\|_1 < \\infty$ ; et $\\|h*g\\|_1 = \\sum_t|\\sum_s g_{t-s}h_s| \\le \\sum_s|h_s|\\sum_x|g_x| = \\|h\\|_1\\|g\\|_1 < \\infty$. (b) $|H(f)| \\le \\sum_t|h_t| = \\|h\\|_1 < \\infty$ borné, donc $\\int_{-1/2}^{1/2}|H(f)|df \\le \\|h\\|_1 < \\infty$. (c) On remplace $h_t = \\int H(f')e^{2\\pi i t f'}df'$ (inversion de Fourier) dans $V(f)=\\sum_t h_t g_t e^{-2\\pi i t f}$, puis on échange somme et intégrale (justifié par $H\\in L^1$, $g\\in\\ell^1$) pour obtenir $V(f) = \\int H(f')G(f-f')df' = (H*G)(f)$. (d) $U(f)=\\sum_{t,s} g_{t-s}h_s e^{-2\\pi i(t-s)f}e^{-2\\pi i s f} = (\\sum_s h_s e^{-2\\pi i s f})(\\sum_x g_x e^{-2\\pi i x f}) = H(f)G(f)$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "(a) Bornes $\\ell^1$ pour produit et convolution",
+          "weight": 2
+        },
+        {
+          "label": "(b) Borne sur $|H(f)|$ et appartenance à $L^1$",
+          "weight": 2
+        },
+        {
+          "label": "(c)-(d) Théorèmes de convolution via Fourier et Fubini",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s8-3",
+    "course": "Time Series",
+    "category": "Série 8",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Pour le périodogramme avec fenêtre (taper) $h$, en remplaçant $\\bar{X}$ par $\\mu$ et avec $\\hat{S}^{(p)}_h(f) = \\big|\\sum_{t=1}^{n} h_t (X_t-\\mu) e^{-2\\pi i f t}\\big|^2$, montrer que $\\mathbb{E}\\big[\\hat{S}^{(p)}_h(f)\\big] = \\int_{-1/2}^{1/2} S(f')\\,|H(f-f')|^2\\,df'$, où $H$ est la transformée de Fourier discrète de $h$.",
+    "back": "Avec $Y_t = X_t-\\mu$, on développe $\\hat{S}^{(p)}_h(f) = \\sum_{\\tau=-n+1}^{n-1}\\sum_{t=1}^{n-|\\tau|} h_t h_{t+|\\tau|} Y_t Y_{t+\\tau} e^{-2\\pi i f\\tau}$. En espérance, $\\mathbb{E}[Y_t Y_{t+\\tau}] = \\gamma_\\tau$, d'où $\\mathbb{E}[\\hat{S}^{(p)}_h(f)] = \\sum_\\tau w_\\tau \\gamma_\\tau e^{-2\\pi i f\\tau}$ avec $w_\\tau = \\sum_t h_t h_{t+\\tau}$ (en posant $h_t=0$ hors de $T$). Par le théorème de convolution, $\\mathbb{E}[\\hat{S}^{(p)}_h(f)] = \\int S(f') W(f-f')df'$. Or $w = \\tilde{h}*\\bar{h}$ avec $\\tilde{h}_t = h_{-t}$, donc $W(f) = \\tilde{H}(f)\\bar{H}(f) = |H(f)|^2$, ce qui donne le résultat.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Développement de $\\hat S^{(p)}_h$ en double somme et passage à l'espérance",
+          "weight": 2
+        },
+        {
+          "label": "Identification de $w_\\tau=\\sum_t h_t h_{t+\\tau}$ et théorème de convolution",
+          "weight": 2
+        },
+        {
+          "label": "Calcul $W(f)=|H(f)|^2$ via $w=\\tilde h*\\bar h$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s8-4",
+    "course": "Time Series",
+    "category": "Série 8",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "On suppose que $\\{X_t\\}$ est un bruit blanc de variance $\\sigma^2$. Prouver que le périodogramme avec fenêtre $\\hat{S}^{(p)}_h(f)$ est sans biais pour tout $n$ si $\\|h\\|_2^2 = 1$.",
+    "back": "La densité spectrale d'un bruit blanc est $S(f) = \\sigma^2$. Donc $\\mathbb{E}[\\hat{S}^{(p)}_h(f)] = \\int_{-1/2}^{1/2} S(f')|H(f-f')|^2 df' = \\sigma^2 \\int_{-1/2}^{1/2}|H(f')|^2 df'$ (relabel et périodicité). Or $\\int_{-1/2}^{1/2}|H(f')|^2 df' = \\sum_{t,s} h_t h_s \\int_{-1/2}^{1/2} e^{-2\\pi i(t-s)f'}df' = \\sum_t h_t^2 = \\|h\\|_2^2$, car $\\int_{-1/2}^{1/2} e^{-2\\pi i\\tau f}df = \\delta_{\\tau,0}$. Ainsi $\\mathbb{E}[\\hat{S}^{(p)}_h(f)] = \\sigma^2\\|h\\|_2^2 = \\sigma^2 = S(f)$ dès que $\\|h\\|_2^2 = 1$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Densité spectrale $S(f)=\\sigma^2$ du bruit blanc dans la formule de biais",
+          "weight": 2
+        },
+        {
+          "label": "Identité de Parseval $\\int|H|^2=\\|h\\|_2^2$ via orthogonalité",
+          "weight": 2
+        },
+        {
+          "label": "Conclusion d'absence de biais sous $\\|h\\|_2^2=1$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s9-1",
+    "course": "Time Series",
+    "category": "Série 9",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Pour le processus bivarié $Y_t = (Y_t^{(1)}, Y_t^{(2)})^T$ généré par $Y_t^{(j)} = X_t^{(j)} + \\varepsilon_t$ ($j=1,2$), avec $X^{(1)}, X^{(2)}$ et $\\varepsilon$ indépendants et $\\varepsilon$ bruit blanc. On pose $\\sigma_j^2 = \\mathrm{Var}(X_t^{(j)})$, $\\sigma_\\varepsilon^2 = \\mathrm{Var}(\\varepsilon_t)$ et $\\tilde{\\gamma}_\\tau^{(1,2)} = \\mathrm{Cov}(X_{t+\\tau}^{(1)}, X_t^{(2)})$. On note $\\gamma_\\tau^{(1,2)}$ la covariance croisée entre $\\{Y_t^{(1)}\\}$ et $\\{Y_t^{(2)}\\}$. Calculer la corrélation entre $\\{Y_t^{(1)}\\}$ et $\\{Y_t^{(2)}\\}$ à tous les retards.",
+    "back": "Comme $\\varepsilon_t$ est un bruit blanc et $X_t^{(j)}, \\varepsilon_t$ indépendants : $\\gamma_\\tau^{(1,2)} = \\mathrm{Cov}(X_{t+\\tau}^{(1)}, X_t^{(2)}) + \\mathrm{Cov}(\\varepsilon_{t+\\tau}, \\varepsilon_t) = \\tilde{\\gamma}_0^{(1,2)} + \\sigma_\\varepsilon^2$ si $\\tau=0$, et $\\tilde{\\gamma}_\\tau^{(1,2)}$ sinon. Les variances marginales sont $\\gamma_0^{(1,1)} = \\sigma_1^2 + \\sigma_\\varepsilon^2$ et $\\gamma_0^{(2,2)} = \\sigma_2^2 + \\sigma_\\varepsilon^2$. D'où $\\rho_\\tau^{(1,2)} = \\dfrac{\\tilde{\\gamma}_0^{(1,2)} + \\sigma_\\varepsilon^2}{\\sqrt{\\sigma_1^2+\\sigma_\\varepsilon^2}\\,\\sqrt{\\sigma_2^2+\\sigma_\\varepsilon^2}}$ si $\\tau=0$, et $\\rho_\\tau^{(1,2)} = \\dfrac{\\tilde{\\gamma}_\\tau^{(1,2)}}{\\sqrt{\\sigma_1^2+\\sigma_\\varepsilon^2}\\,\\sqrt{\\sigma_2^2+\\sigma_\\varepsilon^2}}$ sinon.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Covariance croisée $\\gamma_\\tau^{(1,2)}$ avec terme $\\sigma_\\varepsilon^2$ en $\\tau=0$",
+          "weight": 2
+        },
+        {
+          "label": "Variances marginales $\\sigma_j^2+\\sigma_\\varepsilon^2$",
+          "weight": 2
+        },
+        {
+          "label": "Corrélation $\\rho_\\tau^{(1,2)}$ aux deux cas $\\tau=0$ / $\\tau\\neq0$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s9-2",
+    "course": "Time Series",
+    "category": "Série 9",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Pour le processus à délai, avec $\\alpha > 0$ et $\\nu \\in \\mathbb{Z}$ : $X_t^{(1)} = \\alpha X_{t-\\nu}^{(2)} + \\varepsilon_t$, $t\\in\\mathbb{Z}$, où $\\{\\varepsilon_t\\}$ est un bruit blanc et $\\{X_t^{(2)}\\}$ est stationnaire et non corrélé à $\\{\\varepsilon_t\\}$ à tous les retards. (a) Calculer la corrélation entre $\\{X_t^{(1)}\\}$ et $\\{X_t^{(2)}\\}$ à tous les retards. (b) Calculer le spectre croisé et déterminer son amplitude (module) et sa phase (argument).",
+    "back": "(a) $\\gamma_\\tau^{(1,2)} = \\mathrm{Cov}(X_{t+\\tau}^{(1)}, X_t^{(2)}) = \\alpha\\,\\mathrm{Cov}(X_{t+\\tau-\\nu}^{(2)}, X_t^{(2)}) = \\alpha\\gamma_{\\tau-\\nu}^{(2,2)}$. Avec $\\gamma_0^{(1,1)} = \\alpha^2\\sigma_2^2 + \\sigma_\\varepsilon^2$ et $\\gamma_0^{(2,2)} = \\sigma_2^2$, on obtient $\\rho_\\tau^{(1,2)} = \\dfrac{\\alpha\\gamma_{\\tau-\\nu}^{(2,2)}}{\\sqrt{\\alpha^2\\sigma_2^2+\\sigma_\\varepsilon^2}\\,\\sqrt{\\sigma_2^2}} = \\dfrac{\\rho_{\\tau-\\nu}^{(2,2)}}{\\sqrt{1+\\sigma_\\varepsilon^2/(\\alpha\\sigma_2^2)^2}}$. (b) $S_{1,2}(f) = \\sum_\\tau \\gamma_\\tau^{(1,2)} e^{-2\\pi i f\\tau} = \\alpha\\sum_\\tau \\gamma_{\\tau-\\nu}^{(2,2)} e^{-2\\pi i f\\tau} = \\alpha e^{-2\\pi i f\\nu} S_{2,2}(f)$. L'amplitude est $\\alpha\\,S_{2,2}(f)$ (densité de $X^{(2)}$ mise à l'échelle par $\\alpha$) et la phase est $f \\mapsto -2\\pi f\\nu$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "(a) Covariance croisée $\\alpha\\gamma_{\\tau-\\nu}^{(2,2)}$ et corrélation",
+          "weight": 2
+        },
+        {
+          "label": "(b) Spectre croisé $S_{1,2}(f)=\\alpha e^{-2\\pi i f\\nu}S_{2,2}(f)$",
+          "weight": 2
+        },
+        {
+          "label": "(b) Amplitude $\\alpha S_{2,2}(f)$ et phase $-2\\pi f\\nu$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s9-3",
+    "course": "Time Series",
+    "category": "Série 9",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Pour $Y_t = (Y_t^{(1)}, Y_t^{(2)})^T \\sim \\mathcal{N}(0,\\Sigma)$ indépendamment en $t$, avec $\\Sigma = \\begin{pmatrix} \\sigma_{11} & \\sigma_{12} \\\\ \\sigma_{21} & \\sigma_{22} \\end{pmatrix}$, déterminer l'espérance et la variance de $\\hat{\\gamma}_\\tau^{(1,2)}$ dans $\\hat{\\Gamma}_\\tau = \\frac{1}{N}\\sum_{t=1}^{N-|\\tau|} Y_{t+\\tau} Y_t^T$.",
+    "back": "Espérance : $\\mathbb{E}[\\hat{\\gamma}_\\tau^{(1,2)}] = \\frac{1}{N}\\sum_{t=1}^{N-|\\tau|} \\mathbb{E}[Y_{t+\\tau}^{(1)} Y_t^{(2)}] = \\sigma_{12}$ si $\\tau=0$, et $0$ sinon (indépendance en $t$). Variance : pour des gaussiens, $\\mathbb{E}[(Y_t^{(1)})^2 (Y_t^{(2)})^2] = \\sigma_{11}\\sigma_{22} + 2\\sigma_{12}^2$. Pour $\\tau=0$ : $\\mathrm{Var}(\\hat{\\gamma}_0^{(1,2)}) = \\frac{1}{N^2}[N(\\sigma_{11}\\sigma_{22}+2\\sigma_{12}^2) + N(N-1)\\sigma_{12}^2] - \\sigma_{12}^2 = \\frac{1}{N}(\\sigma_{11}\\sigma_{22}+\\sigma_{12}^2)$. Pour $\\tau\\neq0$, les termes croisés s'annulent : $\\mathrm{Var}(\\hat{\\gamma}_\\tau^{(1,2)}) = \\frac{N-|\\tau|}{N^2}\\sigma_{11}\\sigma_{22}$. En résumé : $\\mathbb{E}[\\hat{\\gamma}_\\tau^{(1,2)}] = \\sigma_{12}\\delta_\\tau$ et $\\mathrm{Var}(\\hat{\\gamma}_\\tau^{(1,2)}) = \\frac{N-|\\tau|}{N^2}(\\sigma_{11}\\sigma_{22} + \\sigma_{12}^2\\delta_\\tau)$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Espérance $\\mathbb{E}[\\hat\\gamma_\\tau^{(1,2)}]=\\sigma_{12}\\delta_\\tau$",
+          "weight": 2
+        },
+        {
+          "label": "Moment gaussien $\\mathbb{E}[(Y^{(1)})^2(Y^{(2)})^2]=\\sigma_{11}\\sigma_{22}+2\\sigma_{12}^2$ et cas $\\tau=0$",
+          "weight": 2
+        },
+        {
+          "label": "Variance cas $\\tau\\neq0$ et résumé avec $\\delta_\\tau$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s10-1",
+    "course": "Time Series",
+    "category": "Série 10",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit $\\varepsilon_t$ un bruit blanc. Montrer que les meilleurs prédicteurs linéaires à un pas pour le processus AR(2) causal $X_t = \\phi_1 X_{t-1} + \\phi_2 X_{t-2} + \\varepsilon_t$, basés respectivement sur une observation $X_1$ et sur deux observations $X_1, X_2$, sont $X_2^1 = \\frac{\\gamma_1}{\\gamma_0} X_1 = \\rho_1 X_1$ et $X_3^2 = \\phi_1 X_2 + \\phi_2 X_1$.",
+    "back": "Prédicteur basé sur $X_1$ : les équations de prédiction donnent $\\gamma_0 \\beta_1 = \\gamma_1$, d'où $X_2^1 = \\frac{\\gamma_1}{\\gamma_0} X_1 = \\rho_1 X_1$. Prédicteur basé sur $X_1, X_2$ : on remarque que $X_3 = \\phi_1 X_2 + \\phi_2 X_1 + \\varepsilon_3$, donc $X_3 - (\\phi_1 X_2 + \\phi_2 X_1) = \\varepsilon_3$. Comme $\\varepsilon_t$ est un bruit blanc, $\\mathbb{E}[\\varepsilon_3 X_1] = \\mathbb{E}[\\varepsilon_3 X_2] = 0$, donc le résidu est orthogonal à $X_1$ et $X_2$ : par caractérisation du meilleur prédicteur linéaire, $X_3^2 = \\phi_1 X_2 + \\phi_2 X_1$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Prédicteur à partir de $X_1$ via équations de prédiction",
+          "weight": 2
+        },
+        {
+          "label": "Orthogonalité de $\\varepsilon_3$ à $X_1, X_2$",
+          "weight": 2
+        },
+        {
+          "label": "Conclusion $X_3^2 = \\phi_1 X_2 + \\phi_2 X_1$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s10-2",
+    "course": "Time Series",
+    "category": "Série 10",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Pour un processus stationnaire $\\{X_t\\}$ de moyenne $\\mu = \\mathbb{E}[X_t]$, le meilleur prédicteur linéaire $X_{n+h}^n = \\beta_0 + \\sum_{j=1}^n \\beta_j X_j$ est obtenu en résolvant les équations de prédiction $\\mathbb{E}\\big[(X_{n+h} - X_{n+h}^n) X_k\\big] = 0$ pour $k = 0, \\dots, n$ (avec $X_0 = 1$). Les coefficients satisfont $\\Gamma_n \\beta = \\gamma_{[h]}$ et $\\beta_0 = \\mu(1 - \\beta^T \\mathbf{1}_n)$, où $\\Gamma_n = [\\gamma_{i-j}]$, $\\beta = (\\beta_1, \\dots, \\beta_n)^T$ et $\\gamma_{[h]} = (\\gamma_{n+h-1}, \\dots, \\gamma_h)^T$. (1) Prouver ce théorème : (a) exprimer l'erreur quadratique moyenne de prédiction sous forme matricielle en fonction de $\\mathrm{Var}(X)$, $\\beta$ et $\\beta_0$ ; (b) trouver $\\beta_0$ ; (c) justifier qu'on peut prendre $\\mu = 0$ sans perte de généralité ; (d) montrer que si $\\mu = 0$ alors $\\mathrm{Var}(X)\\beta = \\mathrm{Cov}(X_{n+h}, X)$ ; (e) montrer l'équivalence des équations de prédiction pour $k = 1, \\dots, n$ avec (2). (2) Si $\\Gamma_n$ est inversible : (a) exprimer $X_{n+h}^n$ sous forme matricielle ; (b) donner l'erreur quadratique moyenne de prédiction.",
+    "back": "(1a) $S(\\beta_0, \\beta) = \\gamma_0 - 2\\beta^T \\mathrm{Cov}(X_{n+h}, X) + \\beta^T \\mathrm{Var}(X)\\beta + (\\mu - \\beta_0 - \\mu\\beta^T\\mathbf{1}_n)^2$, quadratique bornée inférieurement. (1b) $\\partial S/\\partial \\beta_0 = 2\\beta_0 - 2\\mu(1 - \\beta^T\\mathbf{1}_n) = 0 \\Rightarrow \\beta_0 = \\mu(1 - \\beta^T\\mathbf{1}_n)$. (1c) $X_{n+h}^n = \\mu + \\beta^T(X - \\mu\\mathbf{1}_n)$ : pas de perte de généralité avec $\\mu = 0$, alors $\\beta_0 = 0$. (1d) Si $\\mu = 0$, $S(\\beta) = \\gamma_0 - 2\\beta^T\\mathrm{Cov}(X_{n+h}, X) + \\beta^T\\mathrm{Var}(X)\\beta$ ; en dérivant on obtient $\\mathrm{Var}(X)\\beta = \\mathrm{Cov}(X_{n+h}, X)$. (1e) Pour $k=1,\\dots,n$ : $\\gamma_{n+h-k} = \\sum_j \\beta_j \\gamma_{j-k}$, identifiant chaque ligne de l'équation matricielle ; l'équation pour $k=0$ redonne $\\beta_0$. (2a) $X_{n+h}^n = \\mu + \\gamma_{[h]}^T \\Gamma_n^{-1}(X - \\mu\\mathbf{1}_n)$. (2b) $\\mathrm{Var}(X_{n+h} - X_{n+h}^n) = \\gamma_0 - \\gamma_{[h]}^T \\Gamma_n^{-1} \\gamma_{[h]}$, identique au cas centré.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Forme quadratique de $S$ et expression de $\\beta_0$ (1a-b-c)",
+          "weight": 2
+        },
+        {
+          "label": "Équation $\\mathrm{Var}(X)\\beta = \\mathrm{Cov}(X_{n+h},X)$ et équivalence (1d-e)",
+          "weight": 2
+        },
+        {
+          "label": "Forme matricielle de $X_{n+h}^n$ et EQM (2a-b)",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s10-3",
+    "course": "Time Series",
+    "category": "Série 10",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Prouver le théorème suivant. Le meilleur prédicteur linéaire $X_{n+h}^n$ de $X_{n+h}$ dans un processus ARMA causal de représentation linéaire générale $X_t = \\sum_{j=0}^\\infty \\psi_j \\varepsilon_{t-j}$ est $X_{n+h}^n = \\sum_{j=h}^\\infty \\psi_j \\varepsilon_{n+h-j} = \\psi_h \\varepsilon_n + \\psi_{h+1}\\varepsilon_{n-1} + \\cdots$, et l'erreur quadratique moyenne de prédiction correspondante est $\\sigma^2 \\sum_{j=0}^{h-1} \\psi_j^2$.",
+    "back": "Le prédicteur $X_{n+h}^n = \\sum_{i=1}^n \\beta_i X_i$ admet, via la représentation linéaire, une écriture $X_{n+h}^n = \\sum_{j=0}^\\infty c_j \\varepsilon_{n-j}$ démarrant en $\\varepsilon_n$. L'erreur quadratique moyenne vaut $\\mathbb{E}[(X_{n+h} - X_{n+h}^n)^2] = \\sigma^2\\big(\\sum_{j=0}^{h-1}\\psi_j^2 + \\sum_{j=h}^\\infty (\\psi_j - c_{j-h})^2\\big)$, minimisée en prenant $c_j = \\psi_{j+h}$. Le prédicteur est alors $X_{n+h}^n = \\sum_{j=0}^\\infty \\psi_{j+h}\\varepsilon_{n-j} = \\sum_{j=h}^\\infty \\psi_j \\varepsilon_{n+h-j}$. Comme $X_{n+h} = \\sum_{j=0}^\\infty \\psi_j\\varepsilon_{n+h-j}$, l'erreur $X_{n+h} - X_{n+h}^n = \\sum_{j=0}^{h-1}\\psi_j\\varepsilon_{n+h-j}$, d'où l'EQM $= \\sigma^2 \\sum_{j=0}^{h-1}\\psi_j^2$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Représentation linéaire du prédicteur démarrant en $\\varepsilon_n$",
+          "weight": 2
+        },
+        {
+          "label": "Minimisation de l'EQM et choix $c_j = \\psi_{j+h}$",
+          "weight": 2
+        },
+        {
+          "label": "Forme du prédicteur et EQM $\\sigma^2\\sum_{j=0}^{h-1}\\psi_j^2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s11-1",
+    "course": "Time Series",
+    "category": "Série 11",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Les critères AIC et AIC corrigé sont donnés par $\\mathrm{AIC}(\\theta) = -2\\ln L(\\theta\\,|\\,y) + 2k$ et $\\mathrm{AICC}(\\theta) = -2\\ln L(\\theta\\,|\\,y) + 2k\\,\\frac{n}{n-k-1}$, où $n$ est la taille de l'échantillon et $k$ le nombre de paramètres estimés. Expliquer sous quelles conditions sur $n$ et $k$ les deux critères deviennent approximativement équivalents.",
+    "back": "En soustrayant : $\\mathrm{AICC} - \\mathrm{AIC} = 2k\\big(\\frac{n}{n-k-1} - 1\\big) = \\frac{2k(k+1)}{n-k-1}$. Les deux critères sont approximativement équivalents lorsque ce terme correctif est petit. Si $k$ est fixé et $n \\to \\infty$, alors $\\frac{2k(k+1)}{n-k-1} \\to 0$. Plus généralement, si $k = k_n$ dépend de $n$, la correction est petite quand $n$ est grand devant $k_n^2$ (par exemple $k_n^2/n \\to 0$). Si $k$ croît trop vite avec $n$, la correction ne s'annule pas et AICC peut rester sensiblement différent de AIC.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Calcul de $\\mathrm{AICC}-\\mathrm{AIC} = \\frac{2k(k+1)}{n-k-1}$",
+          "weight": 2
+        },
+        {
+          "label": "Limite $k$ fixé, $n\\to\\infty$",
+          "weight": 2
+        },
+        {
+          "label": "Cas $k=k_n$ et condition $k_n^2/n \\to 0$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s11-2",
+    "course": "Time Series",
+    "category": "Série 11",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Déterminer la forme de l'AICC pour un modèle ARMA$(p, q)$ de moyenne nulle lorsque exactement $m$ des coefficients AR et MA sont connus à l'avance et fixés à zéro.",
+    "back": "Si exactement $m$ des $p+q$ coefficients AR et MA sont fixés à zéro, seuls $p+q-m$ de ces coefficients sont estimés. En incluant la variance d'innovation, le nombre total de paramètres estimés est $k = p + q + 1 - m$. En substituant dans la formule de l'AICC : $\\mathrm{AICC}(\\theta) = -2\\ln L(\\theta\\,|\\,y) + 2(p+q+1-m)\\,\\frac{N}{N-(p+q+1-m)-1}$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Comptage des coefficients estimés $p+q-m$",
+          "weight": 2
+        },
+        {
+          "label": "Nombre total de paramètres $k = p+q+1-m$ (variance incluse)",
+          "weight": 2
+        },
+        {
+          "label": "Substitution dans la formule AICC",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s11-3",
+    "course": "Time Series",
+    "category": "Série 11",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Pour une série temporelle de $n = 150$ observations, on ajuste un modèle ARMA$(1,1)$ de moyenne nulle et les autocorrélations d'échantillon des résidus aux retards 1 à 4 sont $\\hat{r}_1 = 0{.}03$, $\\hat{r}_2 = -0{.}09$, $\\hat{r}_3 = 0{.}11$, $\\hat{r}_4 = -0{.}05$. (a) Calculer la statistique de Ljung-Box $Q_4$. (b) On teste $H_0 : \\rho_1 = \\rho_2 = \\cdots = \\rho_4 = 0$ au seuil de 5%. Sous $H_0$, la statistique suit une loi $\\chi^2_{m-p-q}$. Donner les degrés de liberté, la valeur critique (via R), et la conclusion. (c) La conclusion changerait-elle si l'on avait ajusté un modèle AR$(1)$ ? Expliquer brièvement.",
+    "back": "(a) $Q_m = n(n+2)\\sum_{\\tau=1}^m \\frac{\\hat{r}_\\tau^2}{n-\\tau}$. Avec $n=150$, $m=4$ : $Q_4 = 22800\\big(\\frac{0{.}0009}{149} + \\frac{0{.}0081}{148} + \\frac{0{.}0121}{147} + \\frac{0{.}0025}{146}\\big) \\approx 22800 \\times 1{.}60\\times10^{-4} \\approx 3{.}65$. (b) Pour ARMA$(1,1)$, $p=q=1$, ddl $= m-p-q = 4-1-1 = 2$. Valeur critique 5% : $\\texttt{qchisq(0.95, df=2)} = 5{.}991$. Comme $Q_4 \\approx 3{.}65 < 5{.}991$, on ne rejette pas $H_0$ : pas d'autocorrélation résiduelle significative, le modèle est adéquat. (c) Pour AR$(1)$, $p=1$, $q=0$, ddl $= 3$, valeur critique $\\texttt{qchisq(0.95, df=3)} = 7{.}815$. Comme $3{.}65 < 7{.}815$, la conclusion reste de ne pas rejeter $H_0$. Moins de paramètres laisse plus de degrés de liberté et élargit la région d'acceptation.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Calcul de $Q_4 \\approx 3{.}65$",
+          "weight": 2
+        },
+        {
+          "label": "Degrés de liberté, valeur critique et conclusion (ARMA)",
+          "weight": 2
+        },
+        {
+          "label": "Cas AR$(1)$ : ddl 3, valeur critique 7.815, conclusion",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s11-4",
+    "course": "Time Series",
+    "category": "Série 11",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Les critères AIC et BIC pour un modèle à $k$ paramètres ajusté sur $n$ observations sont $\\mathrm{AIC} = -2\\log L + 2k$ et $\\mathrm{BIC} = -2\\log L + k\\log n$. (a) Montrer que la pénalité BIC dépasse la pénalité AIC si et seulement si $n > e^2 \\approx 7{.}4$. (b) Pour une log-vraisemblance fixée, un modèle à $k=3$ paramètres est comparé à un modèle à $k=2$. Pour $n=50$, quel critère est le plus susceptible de sélectionner le modèle le plus grand ? Justifier en comparant les différences de pénalités.",
+    "back": "(a) La pénalité par paramètre est $2$ pour l'AIC et $\\log n$ pour le BIC. On a $\\log n > 2 \\iff n > e^2 \\approx 7{.}39$. Pour toute taille réaliste ($n \\geq 8$), le BIC impose une pénalité par paramètre plus grande, donc favorise des modèles plus parcimonieux. (b) Pour $k=3$ contre $k=2$ (un paramètre de plus), la pénalité supplémentaire est $2$ pour l'AIC et $\\log(50) \\approx 3{.}91$ pour le BIC. Le BIC exige que le paramètre supplémentaire améliore la log-vraisemblance d'au moins $\\approx 1{.}96$ unités, l'AIC seulement de $1$. Donc l'AIC est plus enclin à sélectionner le modèle le plus grand, tandis que le BIC est plus difficile à satisfaire.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Comparaison des pénalités et seuil $n > e^2$",
+          "weight": 2
+        },
+        {
+          "label": "Différences de pénalités pour $n=50$ ($2$ vs $\\log 50$)",
+          "weight": 2
+        },
+        {
+          "label": "Conclusion : AIC plus enclin au modèle plus grand",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s12-1",
+    "course": "Time Series",
+    "category": "Série 12",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "On suppose que $r_t$ suit un modèle ARCH : $r_t = \\sigma_t \\varepsilon_t$ avec $\\sigma_t^2 = \\beta_0 + \\beta_1 r_{t-1}^2 + \\beta_2 r_{t-2}^2$, où les $\\beta_j$ ($j=0,1,2$) sont des constantes non négatives, et $\\varepsilon_t$ est un processus centré de variance unité (pour l'identifiabilité). On note $\\mathcal{F}_t$ l'information disponible au temps $t$. (a) Calculer $E[r_t]$ par la loi de l'espérance itérée en conditionnant sur $\\mathcal{F}_{t-1}$. (b) En supposant $r_t$ stationnaire, calculer la variance marginale de $r_t$. (c) Déterminer les conditions nécessaires de stationnarité de $r_t$ en termes des $\\beta_j$.",
+    "back": "(a) Comme $\\varepsilon_t \\perp \\mathcal{F}_{t-1}$ : $E[r_t\\mid\\mathcal{F}_{t-1}] = \\sigma_t E[\\varepsilon_t] = 0$, donc $E[r_t] = E\\{E[r_t\\mid\\mathcal{F}_{t-1}]\\} = 0$. (b) Par la loi de la variance totale : $\\mathrm{Var}(r_t\\mid\\mathcal{F}_{t-1}) = \\sigma_t^2 = \\beta_0 + \\beta_1 r_{t-1}^2 + \\beta_2 r_{t-2}^2$, d'où $\\mathrm{Var}(r_t) = E[\\sigma_t^2] = \\beta_0 + \\beta_1\\mathrm{Var}(r_{t-1}) + \\beta_2\\mathrm{Var}(r_{t-2})$. Par stationnarité $\\mathrm{Var}(r_t) = \\beta_0/(1-\\beta_1-\\beta_2)$. (c) La variance est positive et finie ssi $\\beta_1 + \\beta_2 < 1$ : c'est la condition (nécessaire) de stationnarité.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "(a) Espérance nulle par espérance itérée",
+          "weight": 2
+        },
+        {
+          "label": "(b) Variance marginale via variance totale",
+          "weight": 2
+        },
+        {
+          "label": "(c) Condition $\\beta_1+\\beta_2<1$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s12-2",
+    "course": "Time Series",
+    "category": "Série 12",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "La classe GARCH$(m,r)$ à bruit gaussien est définie par $r_t = \\sigma_t\\varepsilon_t$, $\\sigma_t^2 = \\sum_{j=1}^m \\alpha_j r_{t-j}^2 + \\sum_{j=1}^r \\beta_j \\sigma_{t-j}^2$, avec $\\varepsilon_t \\overset{iid}{\\sim} \\mathcal{N}(0,1)$ et $\\alpha_j,\\beta_j \\ge 0$. Un GARCH$(m,0)$ est un ARCH$(m)$. Montrer qu'un modèle GARCH est centré et vérifie $\\mathrm{Corr}(r_{t+\\tau}, r_t) = 0$. On note $\\mathcal{F}_t$ l'information disponible jusqu'au temps $t$.",
+    "back": "$\\sigma_t$ est $\\mathcal{F}_{t-1}$-mesurable (déterminé par le passé). Donc $E[r_t] = E[E[\\sigma_t\\varepsilon_t\\mid\\mathcal{F}_{t-1}]] = E[\\sigma_t E[\\varepsilon_t\\mid\\mathcal{F}_{t-1}]] = 0$. Pour $\\tau > 0$ : $\\mathrm{Cov}(r_{t+\\tau}, r_t) = E[r_{t+\\tau} r_t] = E[E[\\sigma_{t+\\tau}\\varepsilon_{t+\\tau} r_t \\mid \\mathcal{F}_{t+\\tau-1}]] = E[r_t \\sigma_{t+\\tau} E[\\varepsilon_{t+\\tau}\\mid\\mathcal{F}_{t+\\tau-1}]] = 0$, car $r_t$ et $\\sigma_{t+\\tau}$ sont $\\mathcal{F}_{t+\\tau-1}$-mesurables. Donc $\\mathrm{Corr}(r_{t+\\tau}, r_t) = 0$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "$\\sigma_t$ est $\\mathcal{F}_{t-1}$-mesurable",
+          "weight": 2
+        },
+        {
+          "label": "Moyenne nulle par espérance itérée",
+          "weight": 2
+        },
+        {
+          "label": "Covariance nulle pour $\\tau>0$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s12-3",
+    "course": "Time Series",
+    "category": "Série 12",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "Montrer que pour un ARCH$(1)$ de paramètres $0 < \\alpha_0$ et $0 < \\alpha_1 < 1/3$, on a $\\mathrm{Corr}(r_{t+\\tau}^2, r_t^2) = \\alpha_1^{|\\tau|}$.",
+    "back": "Pour $\\tau > 0$, en conditionnant sur $\\mathcal{F}_{t+\\tau-1}$ et en utilisant $E[\\varepsilon_{t+\\tau}^2\\mid\\mathcal{F}_{t+\\tau-1}]=1$ et $\\sigma_{t+\\tau}^2 = \\alpha_0 + \\alpha_1 r_{t+\\tau-1}^2$ : $\\mathrm{Cov}(r_{t+\\tau}^2, r_t^2) = \\alpha_1 \\mathrm{Cov}(r_{t+\\tau-1}^2, r_t^2) + \\alpha_0 E[r_t^2] - (1-\\alpha_1)(E[r_t^2])^2$. Comme $E[r_t^2] = \\mathrm{Var}(r_t) = \\alpha_0/(1-\\alpha_1)$, les termes additionnels s'annulent par stationnarité, d'où la récurrence $\\mathrm{Cov}(r_{t+\\tau}^2, r_t^2) = \\alpha_1 \\mathrm{Cov}(r_{t+\\tau-1}^2, r_t^2) = \\alpha_1^{\\tau}\\mathrm{Var}(r_t^2)$. Par symétrie et définition de la corrélation : $\\mathrm{Corr}(r_{t+\\tau}^2, r_t^2) = \\alpha_1^{|\\tau|}$ (la condition $\\alpha_1 < 1/3$ assure l'existence du moment d'ordre 4).",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Conditionnement et expression de la covariance",
+          "weight": 2
+        },
+        {
+          "label": "Annulation des termes via $E[r_t^2]=\\alpha_0/(1-\\alpha_1)$",
+          "weight": 2
+        },
+        {
+          "label": "Récurrence et conclusion $\\alpha_1^{|\\tau|}$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s13-1",
+    "course": "Time Series",
+    "category": "Série 13",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Soient deux filtres LTI (linéaires invariants par translation) $L_1$ et $L_2$, et $\\alpha \\in \\mathbb{C}$. Montrer que le filtre $L = \\alpha L_1 + L_2$ est aussi un filtre LTI.",
+    "back": "Linéarité : pour des suites $\\{X_t\\}, \\{Y_t\\}$ et $\\beta\\in\\mathbb{C}$, $L[\\beta\\{X_t\\}+\\{Y_t\\}] = \\alpha L_1[\\beta\\{X_t\\}+\\{Y_t\\}] + L_2[\\beta\\{X_t\\}+\\{Y_t\\}] = \\beta L[\\{X_t\\}] + L[\\{Y_t\\}]$ par linéarité de $L_1, L_2$. Invariance temporelle : avec $B$ le backshift, $L[B[\\{X_t\\}]] = \\alpha L_1[B[\\{X_t\\}]] + L_2[B[\\{X_t\\}]] = B[\\alpha L_1[\\{X_t\\}]] + B[L_2[\\{X_t\\}]] = B[L[\\{X_t\\}]]$. Donc $L$ est LTI.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Linéarité de $L$",
+          "weight": 2
+        },
+        {
+          "label": "Invariance temporelle de $L$",
+          "weight": 2
+        },
+        {
+          "label": "Usage correct de la linéarité de $L_1,L_2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s13-2",
+    "course": "Time Series",
+    "category": "Série 13",
+    "kind": "exercice",
+    "difficulty": 1,
+    "front": "Soient deux filtres LTI $L_1$ et $L_2$. Montrer que le filtre composé $L = L_1 L_2$, défini par $L[\\{X_t\\}] = L_1[L_2[\\{X_t\\}]]$, est aussi un filtre LTI.",
+    "back": "Linéarité : pour $\\{X_t\\}, \\{Y_t\\}$ et $\\alpha\\in\\mathbb{C}$, $L[\\alpha\\{X_t\\}+\\{Y_t\\}] = L_1[L_2[\\alpha\\{X_t\\}+\\{Y_t\\}]] = L_1[\\alpha L_2[\\{X_t\\}]+L_2[\\{Y_t\\}]] = \\alpha L[\\{X_t\\}] + L[\\{Y_t\\}]$. Invariance temporelle : $L[B[\\{X_t\\}]] = L_1[L_2[B[\\{X_t\\}]]] = L_1[B[L_2[\\{X_t\\}]]] = B[L_1[L_2[\\{X_t\\}]]] = B[L[\\{X_t\\}]]$, en utilisant l'invariance de $L_2$ puis de $L_1$. Donc $L$ est LTI.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Linéarité de la composition",
+          "weight": 2
+        },
+        {
+          "label": "Invariance temporelle de la composition",
+          "weight": 2
+        },
+        {
+          "label": "Application correcte des propriétés de $L_1,L_2$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s13-3",
+    "course": "Time Series",
+    "category": "Série 13",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "On considère des entrées déterministes dans $\\ell^1$. Soit $L : \\ell^1 \\to \\mathbb{C}^{\\mathbb{Z}}$ un filtre numérique tel que, pour chaque $u\\in\\mathbb{Z}$ fixé, l'application $\\{X_t\\} \\mapsto L[\\{X_t\\}]_u$ soit continue pour la norme $\\ell^1$. On définit la réponse impulsionnelle par $h_m = L[\\{\\delta_{t,-m}\\}]_0$, et on suppose $h\\in\\ell^1$. Montrer que $L$ est LTI sur $\\ell^1$ (linéaire et invariant par translation pour toute entrée de $\\ell^1$) si et seulement si, pour tout $\\{X_t\\}\\in\\ell^1$, $L[\\{X_t\\}]_u = \\sum_{m\\in\\mathbb{Z}} h_{u-m} X_m$ pour tout $u\\in\\mathbb{Z}$. Justifier soigneusement tous les échanges limite/somme.",
+    "back": "($\\Rightarrow$) Pour la troncature $X_t^{(N)} = \\sum_{|m|\\le N} X_m\\delta_{t,m}$, on a $\\|X^{(N)}-X\\|_1 \\to 0$, donc par continuité $L[\\{X_t\\}]_u = \\lim_N L[\\{X_t^{(N)}\\}]_u$. Par linéarité (somme finie) et invariance $L[\\{\\delta_{t,m}\\}]_u = L[\\{\\delta_{t,m-u}\\}]_0 = h_{u-m}$, d'où $L[\\{X_t^{(N)}\\}]_u = \\sum_{|m|\\le N} h_{u-m}X_m$. Comme $h\\in\\ell^1$, $\\sum_m |h_{u-m}X_m| \\le \\|h\\|_\\infty \\|X\\|_1 < \\infty$, donc les sommes partielles convergent vers la série complète : $L[\\{X_t\\}]_u = \\sum_{m\\in\\mathbb{Z}} h_{u-m}X_m$. ($\\Leftarrow$) La série est absolument convergente ($\\le \\|h\\|_1\\|X\\|_1$), ce qui donne directement la linéarité ; l'invariance résulte du réindiçage $m' = m-1$ justifié par convergence absolue : $L[B[\\{X_t\\}]]_u = \\sum_m h_{u-m}X_{m-1} = L[\\{X_t\\}]_{u-1} = B[L[\\{X_t\\}]]_u$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "($\\Rightarrow$) Troncature + continuité + invariance",
+          "weight": 2
+        },
+        {
+          "label": "Justification de l'échange limite/somme via $h\\in\\ell^1$",
+          "weight": 2
+        },
+        {
+          "label": "($\\Leftarrow$) Linéarité et invariance par convergence absolue",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s13-4",
+    "course": "Time Series",
+    "category": "Série 13",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit une série stationnaire centrée $\\{X_t\\}$ de représentation spectrale $X_t = \\int_{-1/2}^{1/2} e^{2\\pi i f t}\\,dZ(f)$. On observe la série aux points $1,\\dots,n$ et on définit la transformée de Fourier discrète apodisée (tapered) $J_h(f) = \\sum_{t=1}^n h_t X_t e^{-2\\pi i f t}$, avec $\\|h_t\\|_2^2 = 1$ (moyenne supposée nulle connue, sans correction). Montrer que $J_h(f) = \\int_{-1/2}^{1/2} H(f-f')\\,dZ(f')$.",
+    "back": "En substituant la représentation spectrale : $J_h(f) = \\sum_{t=1}^n h_t \\left(\\int_{-1/2}^{1/2} e^{2\\pi i f' t}\\,dZ(f')\\right) e^{-2\\pi i f t} = \\int_{-1/2}^{1/2} \\left(\\sum_{t=1}^n h_t e^{2\\pi i (f'-f) t}\\right) dZ(f')$. En posant $H(f-f') = \\sum_{t=1}^n h_t e^{-2\\pi i (f-f') t}$ (transformée de Fourier du taper), on obtient $J_h(f) = \\int_{-1/2}^{1/2} H(f-f')\\,dZ(f')$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Substitution de la représentation spectrale",
+          "weight": 2
+        },
+        {
+          "label": "Interversion somme/intégrale",
+          "weight": 2
+        },
+        {
+          "label": "Identification de $H(f-f')$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s13-5",
+    "course": "Time Series",
+    "category": "Série 13",
+    "kind": "exercice",
+    "difficulty": 2,
+    "front": "Soit $\\{X_t\\}$ une série stationnaire et $\\{Y_t\\} = (I - B)[\\{X_t\\}]$ (filtre de différenciation). $Y_t$ est-il stationnaire ? Si oui, exprimer la densité spectrale $S_Y(f)$ de $\\{Y_t\\}$ en fonction de la densité spectrale $S_X(f)$ de $\\{X_t\\}$.",
+    "back": "$(I-B)$ est un filtre LTI de réponse impulsionnelle dans $\\ell^1$, donc $\\{Y_t\\}$ est stationnaire (Th. 9.11). Sa fonction de transfert est $H(f) = 1 - e^{-2\\pi i f}$. Par le théorème de filtrage spectral : $S_Y(f) = |H(f)|^2 S_X(f) = |1 - e^{-2\\pi i f}|^2 S_X(f) = 2(1-\\cos(2\\pi f)) S_X(f) = 4\\sin^2(\\pi f)\\, S_X(f)$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Stationnarité de $\\{Y_t\\}$",
+          "weight": 2
+        },
+        {
+          "label": "Fonction de transfert $H(f)=1-e^{-2\\pi i f}$",
+          "weight": 2
+        },
+        {
+          "label": "$S_Y(f)=4\\sin^2(\\pi f)S_X(f)$",
+          "weight": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "ts-s13-6",
+    "course": "Time Series",
+    "category": "Série 13",
+    "kind": "exercice",
+    "difficulty": 3,
+    "front": "On a affirmé que les processus AR$(p)$ sont réversibles dans le temps : si $\\{X_t\\}$ est un AR$(p)$ et $\\{Y_t\\}$ est défini par $Y_t = X_{-t}$ pour tout $t\\in\\mathbb{Z}$, alors $\\{Y_t\\}$ est un AR$(p)$ de mêmes paramètres. Précisément, si $X_t = \\sum_{j=1}^p \\phi_j X_{t-j} + \\epsilon_t$, alors $Y_t = \\sum_{j=1}^p \\phi_j Y_{t-j} + \\tilde{\\nu}_t$ où $\\tilde{\\nu}_t$ a la même loi que $\\epsilon_t$. Prouver ce résultat.",
+    "back": "Posons $\\phi_0 = -1$ et $\\tilde{\\nu}_t = \\sum_{j=0}^p \\phi_j Y_{t-j}$. $\\tilde{\\nu}_t$ est gaussien (combinaison linéaire de gaussiennes) et centré car $E[X_t]=0$. Pour tout $\\tau$ : $\\gamma_\\tau^{(Y)} = E[Y_t Y_{t+\\tau}] = E[X_{-t} X_{-t-\\tau}] = \\gamma_{-\\tau}^{(X)} = \\gamma_\\tau^{(X)}$, donc $S_Y(f) = S_X(f)$. Comme $\\tilde{\\nu}$ provient d'un filtre LTI de fonction de transfert $\\Phi(e^{-2\\pi i f})$ appliqué à $\\{Y_t\\}$ : $S_{\\tilde{\\nu}}(f) = |\\Phi(e^{-2\\pi i f})|^2 S_Y(f) = |\\Phi(e^{-2\\pi i f})|^2 S_X(f) = \\sigma_\\epsilon^2 |\\Phi(e^{-2\\pi i f})/\\Phi(e^{-2\\pi i f})|^2 = \\sigma_\\epsilon^2$. Donc $\\tilde{\\nu}$ est un bruit blanc de variance $\\sigma_\\epsilon^2$, de même loi que $\\epsilon_t$.",
+    "bareme": {
+      "total": 6,
+      "points": [
+        {
+          "label": "Définition de $\\tilde{\\nu}_t$, gaussianité et moyenne nulle",
+          "weight": 2
+        },
+        {
+          "label": "Égalité des autocovariances $S_Y=S_X$",
+          "weight": 2
+        },
+        {
+          "label": "Densité spectrale plate $\\Rightarrow$ bruit blanc $\\sigma_\\epsilon^2$",
+          "weight": 2
+        }
+      ]
+    }
   }
 ]
