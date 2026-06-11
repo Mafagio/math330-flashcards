@@ -91,7 +91,7 @@ def grade(front: str, back: str, bareme: dict, answer: str) -> dict:
             },
             method="POST",
         )
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=30) as resp:  # borne la tenue du lock DB
             data = json.loads(resp.read().decode("utf-8"))
         text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
         out = _parse_json(text)
@@ -103,6 +103,9 @@ def grade(front: str, back: str, bareme: dict, answer: str) -> dict:
             "hits": out.get("hits", []),
         }
     except Exception as e:  # repli sûr : on ne casse jamais le flux de jeu
+        code = getattr(e, "code", None)
+        print(f"[grader] correcteur LLM indisponible (repli stub) : {type(e).__name__}"
+              f"{' HTTP '+str(code) if code else ''}: {e}", flush=True)
         res = _stub_grade(back, bareme, answer)
         res["justification"] = f"[correcteur indisponible, note approximative] {res['justification']}"
         return res

@@ -183,25 +183,28 @@ def courses(u=Depends(current_user)):
 def progress(u=Depends(current_user)):
     db = DB.get_db()
     uid = u["id"]
-    # derniere review par carte (id croissant -> la derniere ecrase)
+    # derniere review par carte (ORDER BY id -> la plus recente ecrase ; on garde son created_at)
     rev = {}
-    for r in db.execute("SELECT card_id, known, q, id FROM reviews WHERE user_id=? ORDER BY id", (uid,)):
+    for r in db.execute("SELECT card_id, known, q, created_at FROM reviews WHERE user_id=? ORDER BY id", (uid,)):
         rev[r["card_id"]] = r
-    # dernier audit note par carte
+    # dernier audit note par carte ; 't' = moment du resultat (graded_at, sinon created_at)
     aud = {}
-    for a in db.execute("SELECT card_id, status, id FROM audits "
+    for a in db.execute("SELECT card_id, status, COALESCE(graded_at, created_at) AS t FROM audits "
                         "WHERE user_id=? AND status IN ('passed','failed') ORDER BY id", (uid,)):
         aud[a["card_id"]] = a
 
     def level(cid):
         r = rev.get(cid); a = aud.get(cid)
-        if a and (not r or a["id"] > r["id"]):       # audit plus recent que la review
+        # action la plus recente entre review et resultat d'audit, par HORODATAGE
+        # (reviews.id et audits.id sont des compteurs separes -> non comparables entre tables).
+        # En cas d'egalite a la seconde, la review (action deliberee) l'emporte -> '>' strict.
+        if a and (not r or a["t"] > r["created_at"]):
             return 4 if a["status"] == "passed" else 0
         if not r:
             return -1
         if not r["known"]:
             return 0
-        q = r["q"] if r["q"] is not None else 0.8
+        q = r["q"] if r["q"] is not None else 0.6   # repli prudent (ne surevalue pas une confiance inconnue)
         return 3 if q >= 0.95 else (2 if q >= 0.8 else 1)
 
     out = {}

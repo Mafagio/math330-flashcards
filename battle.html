@@ -281,7 +281,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 .prog-count b{color:var(--ink)}
 .prog-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(24px,1fr));gap:5px;padding:4px 14px 14px}
 .prog-cat.open .prog-grid{display:grid}
-.prog-cell{aspect-ratio:1;border-radius:5px;border:1px solid rgba(0,0,0,.08)}
+.prog-cell{aspect-ratio:1;border-radius:5px;border:1px solid rgba(128,128,144,.30)}
 /* échelle rouge -> vert (niveaux), gris = jamais vue */
 .lv--1{background:var(--track2)}
 .lv0{background:#e5484d}
@@ -860,7 +860,7 @@ const PROG_LEVELS=[
   {cls:"lv1", label:"60%"},{cls:"lv2", label:"80%"},{cls:"lv3", label:"95%"},
   {cls:"lv4", label:"audit validé"}
 ];
-function lvClass(l){ return l<0 ? "lv--1" : "lv"+l; }
+function lvClass(l){ l = (l==null ? -1 : l); return l<0 ? "lv--1" : "lv"+l; }
 async function renderProgress(){
   await refreshHeader();
   const data = await api("/progress");
@@ -875,7 +875,8 @@ async function renderProgress(){
       const wrap=document.createElement("div"); wrap.className="prog-cat";
       const head=document.createElement("div"); head.className="prog-cat-head";
       let bar='<div class="prog-bar">';
-      [0,1,2,3,4].forEach(lv=>{ const n=cat.levels[String(lv)]||0; if(n) bar+=`<i class="lv${lv}" style="width:${(100*n/cat.total).toFixed(2)}%"></i>`; });
+      const lvl=cat.levels||{}, tot=cat.total||1;
+      [0,1,2,3,4].forEach(lv=>{ const n=lvl[String(lv)]||0; if(n) bar+=`<i class="lv${lv}" style="width:${(100*n/tot).toFixed(2)}%"></i>`; });
       bar+='</div>';
       head.innerHTML=`<span class="prog-caret">▶</span><span class="prog-cat-name">${escapeHtml(cat.category)}</span>${bar}`
         +`<span class="prog-count"><b>${cat.known}</b>/${cat.total} connues</span>`;
