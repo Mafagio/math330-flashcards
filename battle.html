@@ -264,6 +264,32 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
   font-weight:600;cursor:pointer;transition:.12s}
 .seg button.sel{background:var(--accent);color:#fff}
 
+/* ---------- Progression ---------- */
+.prog-legend{display:flex;flex-wrap:wrap;gap:12px;margin:2px 0 16px;font-size:12.5px;color:var(--muted)}
+.prog-legend span{display:inline-flex;align-items:center;gap:5px}
+.prog-legend i{width:13px;height:13px;border-radius:4px;display:inline-block}
+.prog-course-title{font-weight:700;font-size:14px;margin:14px 0 8px}
+.prog-cat{border:1px solid var(--line);border-radius:12px;margin-bottom:9px;overflow:hidden;background:var(--chip-bg)}
+.prog-cat-head{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;user-select:none}
+.prog-cat-head:hover{background:var(--accent-soft)}
+.prog-caret{transition:transform .15s;color:var(--muted);font-size:12px}
+.prog-cat.open .prog-caret{transform:rotate(90deg)}
+.prog-cat-name{font-weight:600}
+.prog-bar{display:flex;height:8px;width:120px;border-radius:999px;overflow:hidden;background:var(--track);flex:none}
+.prog-bar>i{display:block;height:100%}
+.prog-count{margin-left:auto;font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.prog-count b{color:var(--ink)}
+.prog-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(24px,1fr));gap:5px;padding:4px 14px 14px}
+.prog-cat.open .prog-grid{display:grid}
+.prog-cell{aspect-ratio:1;border-radius:5px;border:1px solid rgba(0,0,0,.08)}
+/* échelle rouge -> vert (niveaux), gris = jamais vue */
+.lv--1{background:var(--track2)}
+.lv0{background:#e5484d}
+.lv1{background:#f5a524}
+.lv2{background:#d6c020}
+.lv3{background:#38b000}
+.lv4{background:#1a8f5a}
+
 /* ---------- Rangs ---------- */
 #hp-rank img{margin-right:5px}
 .rk-row{display:flex;align-items:center;gap:8px;margin:8px 0 2px}
@@ -337,6 +363,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
   <nav class="tabs" id="tabs">
     <button data-tab="dash" class="active">Tableau de bord</button>
     <button data-tab="review">Réviser</button>
+    <button data-tab="progress">Progression</button>
     <button data-tab="audits">Audits <span class="badge hidden" id="tab-aud-badge">0</span></button>
     <button data-tab="challenge">Challenge</button>
     <button data-tab="duels">Duels</button>
@@ -359,6 +386,17 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
       <h2><img src="battle-assets/ui/ic-activite.png" width="20" height="20" style="object-fit:contain;vertical-align:-4px" alt=""> Activité</h2>
       <p class="sub">Le fil de la rivalité.</p>
       <ul class="feed" id="feed"></ul>
+    </div>
+  </section>
+
+  <!-- PROGRESSION -->
+  <section data-panel="progress" class="hidden">
+    <div class="card">
+      <h2>Progression</h2>
+      <p class="sub">Tes cartes par section. Clique une section pour voir chaque carte, colorée de
+        <b style="color:#e5484d">rouge</b> (pas connue) à <b style="color:#1a8f5a">vert</b> (connue / validée).</p>
+      <div class="prog-legend" id="prog-legend"></div>
+      <div id="prog-body"></div>
     </div>
   </section>
 
@@ -728,6 +766,7 @@ function switchTab(tab){
   $$("#tabs button").forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
   $$("#app section[data-panel]").forEach(s=>s.classList.toggle("hidden", s.dataset.panel!==tab));
   if(tab==="dash")      renderDash();
+  if(tab==="progress")  renderProgress();
   if(tab==="audits")    renderAudits();
   if(tab==="challenge") renderChallenge();
   if(tab==="duels")     renderDuels();
@@ -812,6 +851,43 @@ async function renderRanks(){
       + `<div class="rank-cell-range small muted">${range}</div>`
       + (i===cur.index?'<div class="rank-cell-tag">toi</div>':'');
     box.appendChild(cell);
+  });
+}
+
+/* ---------- Progression : vue d'ensemble par section ---------- */
+const PROG_LEVELS=[
+  {cls:"lv--1", label:"jamais vue"},{cls:"lv0", label:"pas connue"},
+  {cls:"lv1", label:"60%"},{cls:"lv2", label:"80%"},{cls:"lv3", label:"95%"},
+  {cls:"lv4", label:"audit validé"}
+];
+function lvClass(l){ return l<0 ? "lv--1" : "lv"+l; }
+async function renderProgress(){
+  await refreshHeader();
+  const data = await api("/progress");
+  const leg=$("#prog-legend"); leg.innerHTML="";
+  PROG_LEVELS.forEach(p=>{ const s=document.createElement("span"); s.innerHTML=`<i class="${p.cls}"></i>${p.label}`; leg.appendChild(s); });
+  const body=$("#prog-body"); body.innerHTML="";
+  const courses=Object.keys(data||{});
+  if(!courses.length){ body.innerHTML='<p class="empty">Aucune carte pour l\'instant.</p>'; return; }
+  courses.forEach(course=>{
+    if(courses.length>1){ const t=document.createElement("div"); t.className="prog-course-title"; t.textContent=course; body.appendChild(t); }
+    data[course].forEach(cat=>{
+      const wrap=document.createElement("div"); wrap.className="prog-cat";
+      const head=document.createElement("div"); head.className="prog-cat-head";
+      let bar='<div class="prog-bar">';
+      [0,1,2,3,4].forEach(lv=>{ const n=cat.levels[String(lv)]||0; if(n) bar+=`<i class="lv${lv}" style="width:${(100*n/cat.total).toFixed(2)}%"></i>`; });
+      bar+='</div>';
+      head.innerHTML=`<span class="prog-caret">▶</span><span class="prog-cat-name">${escapeHtml(cat.category)}</span>${bar}`
+        +`<span class="prog-count"><b>${cat.known}</b>/${cat.total} connues</span>`;
+      const grid=document.createElement("div"); grid.className="prog-grid";
+      cat.cards.forEach(c=>{
+        const cell=document.createElement("div"); cell.className="prog-cell "+lvClass(c.level);
+        cell.title=(c.kind?"["+c.kind+"] ":"")+(c.front||"");
+        grid.appendChild(cell);
+      });
+      head.onclick=()=> wrap.classList.toggle("open");
+      wrap.append(head, grid); body.appendChild(wrap);
+    });
   });
 }
 

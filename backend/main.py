@@ -172,6 +172,55 @@ def courses(u=Depends(current_user)):
 
 
 # ---------------------------------------------------------------------------
+# Progression — vue d'ensemble : niveau de connaissance par carte (rouge->vert)
+# ---------------------------------------------------------------------------
+# Niveau par carte, d'apres la DERNIERE action de l'utilisateur (review ou audit) :
+#   -1 jamais vue (gris) | 0 pas connue / audit rate (rouge) | 1 connue 60% (orange)
+#    2 connue 80% (ambre) | 3 connue 95% (vert) | 4 audit reussi (vert valide).
+# "connue" (compteur X/total) = niveau >= 1.
+
+@app.get("/progress")
+def progress(u=Depends(current_user)):
+    db = DB.get_db()
+    uid = u["id"]
+    # derniere review par carte (id croissant -> la derniere ecrase)
+    rev = {}
+    for r in db.execute("SELECT card_id, known, q, id FROM reviews WHERE user_id=? ORDER BY id", (uid,)):
+        rev[r["card_id"]] = r
+    # dernier audit note par carte
+    aud = {}
+    for a in db.execute("SELECT card_id, status, id FROM audits "
+                        "WHERE user_id=? AND status IN ('passed','failed') ORDER BY id", (uid,)):
+        aud[a["card_id"]] = a
+
+    def level(cid):
+        r = rev.get(cid); a = aud.get(cid)
+        if a and (not r or a["id"] > r["id"]):       # audit plus recent que la review
+            return 4 if a["status"] == "passed" else 0
+        if not r:
+            return -1
+        if not r["known"]:
+            return 0
+        q = r["q"] if r["q"] is not None else 0.8
+        return 3 if q >= 0.95 else (2 if q >= 0.8 else 1)
+
+    out = {}
+    for c in db.execute("SELECT id, course, category, kind, front FROM cards ORDER BY course, category, id"):
+        lv = level(c["id"])
+        cat = out.setdefault(c["course"], {}).setdefault(
+            c["category"], {"category": c["category"], "total": 0, "known": 0,
+                            "levels": {str(k): 0 for k in (-1, 0, 1, 2, 3, 4)}, "cards": []})
+        cat["total"] += 1
+        if lv >= 1:
+            cat["known"] += 1
+        cat["levels"][str(lv)] += 1
+        front = (c["front"] or "").strip().replace("\n", " ")
+        cat["cards"].append({"id": c["id"], "kind": c["kind"], "level": lv,
+                             "front": front[:160] + ("…" if len(front) > 160 else "")})
+    return {course: list(cats.values()) for course, cats in out.items()}
+
+
+# ---------------------------------------------------------------------------
 # Révision -> déclenche les audits
 # ---------------------------------------------------------------------------
 
