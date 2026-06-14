@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS cards (
     back        TEXT NOT NULL,                -- réponse de référence (FR)
     bareme_json TEXT NOT NULL,                -- barème /6 (voir README)
     difficulty  INTEGER NOT NULL DEFAULT 2,   -- 1=facile 2=moyen 3=dur
+    no_audit    INTEGER NOT NULL DEFAULT 0,   -- 1 = jamais tirée en audit (preuve hors chapitre)
     front_en       TEXT,                      -- version anglaise (NULL si non traduite)
     back_en        TEXT,
     bareme_json_en TEXT
@@ -169,6 +170,8 @@ def _migrate(db: sqlite3.Connection) -> None:
     for col in ("front_en", "back_en", "bareme_json_en"):
         if col not in ccols:
             db.execute(f"ALTER TABLE cards ADD COLUMN {col} TEXT")
+    if "no_audit" not in ccols:
+        db.execute("ALTER TABLE cards ADD COLUMN no_audit INTEGER NOT NULL DEFAULT 0")
 
     # Compétitions par cours : verse l'XP globale héritée des comptes existants dans
     # la compétition "Martingales" (l'ancien MATH-330), une seule fois (les comptes

@@ -33,13 +33,14 @@ def main(path: str):
             bareme_en = c.get("bareme_en")
             conn.execute("""
                 INSERT INTO cards(id, course, category, kind, front, back, bareme_json, difficulty,
-                                  front_en, back_en, bareme_json_en)
+                                  no_audit, front_en, back_en, bareme_json_en)
                 VALUES (:id,:course,:category,:kind,:front,:back,:bareme,:difficulty,
-                        :front_en,:back_en,:bareme_en)
+                        :no_audit,:front_en,:back_en,:bareme_en)
                 ON CONFLICT(id) DO UPDATE SET
                     course=excluded.course, category=excluded.category, kind=excluded.kind,
                     front=excluded.front, back=excluded.back,
                     bareme_json=excluded.bareme_json, difficulty=excluded.difficulty,
+                    no_audit=excluded.no_audit,
                     -- COALESCE : ne jamais écraser une traduction existante par un import sans _en
                     front_en=COALESCE(excluded.front_en, cards.front_en),
                     back_en=COALESCE(excluded.back_en, cards.back_en),
@@ -49,6 +50,7 @@ def main(path: str):
                 "kind": c.get("kind", "cours"), "front": c["front"], "back": c["back"],
                 "bareme": json.dumps(c.get("bareme", {"total": 6, "points": []}), ensure_ascii=False),
                 "difficulty": int(c.get("difficulty", 2)),
+                "no_audit": 1 if c.get("no_audit") else 0,
                 "front_en": c.get("front_en"), "back_en": c.get("back_en"),
                 "bareme_en": json.dumps(bareme_en, ensure_ascii=False) if bareme_en else None,
             })

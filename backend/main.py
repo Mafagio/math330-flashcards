@@ -289,20 +289,24 @@ def review(r: ReviewIn, u=Depends(current_user)):
         else:
             q = r.q if r.q in S.CONF_LEVELS else 0.80
             pts = round(base_known * mult, 2)
+            # Cartes "no_audit" (preuve hors chapitre) : jamais auditées -> clearées tout de
+            # suite, et ne comptent pas vers le batch d'audit.
+            no_audit = bool(card["no_audit"])
+            status = "cleared" if no_audit else "provisional"
             cur = db.execute("INSERT INTO reviews(user_id,card_id,known,q,base_points,status) "
-                             "VALUES (?,?,1,?,?, 'provisional')",
-                             (u["id"], r.card_id, q, pts))
+                             "VALUES (?,?,1,?,?,?)",
+                             (u["id"], r.card_id, q, pts, status))
             apply_xp(db, u["id"], course, pts)   # crée la ligne scores si besoin
-            db.execute("UPDATE scores SET known_since_audit = known_since_audit + 1 "
-                       "WHERE user_id=? AND course=?", (u["id"], course))
-
-            counter = db.execute("SELECT known_since_audit FROM scores WHERE user_id=? AND course=?",
-                                 (u["id"], course)).fetchone()["known_since_audit"]
-            if counter >= S.AUDIT_BATCH:
-                batched = True
-                new_audits = _form_audit_batch(db, u["id"], course)
-                db.execute("UPDATE scores SET known_since_audit=0 WHERE user_id=? AND course=?",
-                           (u["id"], course))
+            if not no_audit:
+                db.execute("UPDATE scores SET known_since_audit = known_since_audit + 1 "
+                           "WHERE user_id=? AND course=?", (u["id"], course))
+                counter = db.execute("SELECT known_since_audit FROM scores WHERE user_id=? AND course=?",
+                                     (u["id"], course)).fetchone()["known_since_audit"]
+                if counter >= S.AUDIT_BATCH:
+                    batched = True
+                    new_audits = _form_audit_batch(db, u["id"], course)
+                    db.execute("UPDATE scores SET known_since_audit=0 WHERE user_id=? AND course=?",
+                               (u["id"], course))
 
         db.commit()
         s = read_score(db, u["id"], course)
@@ -315,7 +319,7 @@ def _form_audit_batch(db, uid: int, course: str) -> int:
     """Tire AUDIT_SAMPLE cartes parmi les AUDIT_BATCH dernières 'provisional' DU COURS."""
     batch = db.execute(
         "SELECT r.* FROM reviews r JOIN cards c ON c.id=r.card_id "
-        "WHERE r.user_id=? AND r.status='provisional' AND c.course=? "
+        "WHERE r.user_id=? AND r.status='provisional' AND c.course=? AND c.no_audit=0 "
         "ORDER BY r.id DESC LIMIT ?", (uid, course, S.AUDIT_BATCH)).fetchall()
     if not batch:
         return 0
@@ -552,7 +556,7 @@ def opponent_claims(course: Optional[str] = None, u=Depends(current_user)):
     if not opp:
         return []
     args = [opp["id"]]
-    where = "r.user_id=? AND r.known=1 AND c.kind!='exam'"
+    where = "r.user_id=? AND r.known=1 AND c.kind!='exam' AND c.no_audit=0"
     if course:
         where += " AND c.course=?"; args.append(course)
     rows = db.execute(f"""
@@ -582,7 +586,7 @@ def create_duel(d: DuelIn, u=Depends(current_user)):
         opp = db.execute("SELECT * FROM users WHERE name=?", (d.opponent,)).fetchone()
         if not opp or opp["id"] == u["id"]:
             raise HTTPException(400, "Adversaire invalide.")
-        args, where = [d.course], ["course=?", "kind != 'exam'"]
+        args, where = [d.course], ["course=?", "kind != 'exam'", "no_audit=0"]
         if d.categories:
             cats = [x.strip() for x in d.categories.split(",") if x.strip()]
             if cats:
