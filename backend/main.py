@@ -176,7 +176,7 @@ def feed(u=Depends(current_user)):
 def cards(course: Optional[str] = None, categories: Optional[str] = None,
           u=Depends(current_user)):
     db = DB.get_db()
-    q = "SELECT id, course, category, kind, front, back, difficulty FROM cards"
+    q = "SELECT id, course, category, kind, front, back, front_en, back_en, difficulty FROM cards"
     args, where = [], ["kind != 'exam'"]   # les exercices d'examen ne sont pas des cartes à réviser
     if course:
         where.append("course=?"); args.append(course)
@@ -362,7 +362,7 @@ def audits_pending(u=Depends(current_user)):
     db = DB.get_db()
     rows = db.execute("""
         SELECT a.id, a.source, a.q, a.challenger_id, a.duel_id,
-               c.front, c.category, c.course, c.kind
+               c.front, c.front_en, c.category, c.course, c.kind
         FROM audits a JOIN cards c ON c.id=a.card_id
         WHERE a.user_id=? AND a.status='pending' ORDER BY a.id""", (u["id"],)).fetchall()
     out = []
@@ -377,6 +377,7 @@ def audits_pending(u=Depends(current_user)):
 
 class AnswerIn(BaseModel):
     answer: str
+    lang: Optional[str] = None     # "en" -> corrige contre la version anglaise de la carte
 
 
 @app.post("/audits/{audit_id}/answer")
@@ -390,9 +391,13 @@ def answer_audit(audit_id: int, a: AnswerIn, u=Depends(current_user)):
         if au["status"] != "pending":
             raise HTTPException(400, "Audit déjà corrigé.")
         card = db.execute("SELECT * FROM cards WHERE id=?", (au["card_id"],)).fetchone()
-        bareme = json.loads(card["bareme_json"])
+        # Corrige dans la langue où l'utilisateur a révisé (si la traduction existe).
+        use_en = a.lang == "en" and card["front_en"] and card["back_en"] and card["bareme_json_en"]
+        front = card["front_en"] if use_en else card["front"]
+        back = card["back_en"] if use_en else card["back"]
+        bareme = json.loads(card["bareme_json_en"] if use_en else card["bareme_json"])
 
-        res = grade(card["front"], card["back"], bareme, a.answer)
+        res = grade(front, back, bareme, a.answer)
         outcome = S.outcome_from_score(res["score"])
         is_exam = au["source"] == "exam_check"
         # Pas de maîtrise Brier pour un exam_check : son XP vient de la logique d'examen.
@@ -442,7 +447,7 @@ def answer_audit(audit_id: int, a: AnswerIn, u=Depends(current_user)):
         return {
             "score": res["score"], "outcome": outcome, "mastery": reported_mastery,
             "justification": res["justification"], "hits": res.get("hits", []),
-            "back": card["back"], "bareme": bareme,
+            "back": back, "bareme": bareme,
             "xp": s["xp"], "tokens": s["tokens"],
             "pending_audits": pending_count(db, u["id"]),
         }

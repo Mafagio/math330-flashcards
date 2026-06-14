@@ -30,18 +30,27 @@ def main(path: str):
     n = 0
     with DB.LOCK:
         for c in cards:
+            bareme_en = c.get("bareme_en")
             conn.execute("""
-                INSERT INTO cards(id, course, category, kind, front, back, bareme_json, difficulty)
-                VALUES (:id,:course,:category,:kind,:front,:back,:bareme,:difficulty)
+                INSERT INTO cards(id, course, category, kind, front, back, bareme_json, difficulty,
+                                  front_en, back_en, bareme_json_en)
+                VALUES (:id,:course,:category,:kind,:front,:back,:bareme,:difficulty,
+                        :front_en,:back_en,:bareme_en)
                 ON CONFLICT(id) DO UPDATE SET
                     course=excluded.course, category=excluded.category, kind=excluded.kind,
                     front=excluded.front, back=excluded.back,
-                    bareme_json=excluded.bareme_json, difficulty=excluded.difficulty
+                    bareme_json=excluded.bareme_json, difficulty=excluded.difficulty,
+                    -- COALESCE : ne jamais écraser une traduction existante par un import sans _en
+                    front_en=COALESCE(excluded.front_en, cards.front_en),
+                    back_en=COALESCE(excluded.back_en, cards.back_en),
+                    bareme_json_en=COALESCE(excluded.bareme_json_en, cards.bareme_json_en)
             """, {
                 "id": c["id"], "course": c["course"], "category": c["category"],
                 "kind": c.get("kind", "cours"), "front": c["front"], "back": c["back"],
                 "bareme": json.dumps(c.get("bareme", {"total": 6, "points": []}), ensure_ascii=False),
                 "difficulty": int(c.get("difficulty", 2)),
+                "front_en": c.get("front_en"), "back_en": c.get("back_en"),
+                "bareme_en": json.dumps(bareme_en, ensure_ascii=False) if bareme_en else None,
             })
             n += 1
         conn.commit()

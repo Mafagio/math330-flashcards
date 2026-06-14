@@ -571,6 +571,13 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
         <button data-cards="themed">Cartes selon le thème</button>
       </div>
     </div>
+    <div class="modal-sec">
+      <div class="modal-label">Langue des cartes <span class="muted" style="font-weight:500">(Martingales)</span></div>
+      <div class="seg" id="lang-seg">
+        <button data-lang="en">English</button>
+        <button data-lang="fr">Français</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -761,6 +768,20 @@ function renderSettings(){
     });
   }
   $$("#cards-seg button").forEach(b=>b.classList.toggle("sel", b.dataset.cards===cd));
+  $$("#lang-seg button").forEach(b=>b.classList.toggle("sel", b.dataset.lang===cardLang()));
+}
+/* Langue des cartes : anglais par défaut. Ne change QUE l'affichage (id/historique intacts). */
+function cardLang(){ return localStorage.getItem("battle_lang")==="fr" ? "fr" : "en"; }
+function cardField(c, base){
+  if(cardLang()==="en"){ const v=c && c[base+"_en"]; if(v) return v; }   // repli FR si pas traduit
+  return c ? c[base] : "";
+}
+function applyLang(l){
+  localStorage.setItem("battle_lang", l==="fr" ? "fr" : "en");
+  renderSettings();
+  // rafraîchit la vue courante pour appliquer la langue
+  const active=$("#tabs button.active");
+  if(active) switchTab(active.dataset.tab);
 }
 function openSettings(){ $("#settings-overlay").classList.remove("hidden"); renderSettings(); }
 function closeSettings(){ $("#settings-overlay").classList.add("hidden"); }
@@ -769,6 +790,7 @@ $("#profil-chip").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key==="
 $("#settings-close").onclick = closeSettings;
 $("#settings-overlay").onclick = e=>{ if(e.target===$("#settings-overlay")) closeSettings(); };
 $$("#cards-seg button").forEach(b=> b.onclick=()=>applyCards(b.dataset.cards));
+$$("#lang-seg button").forEach(b=> b.onclick=()=>applyLang(b.dataset.lang));
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSettings(); });
 renderSettings();
 
@@ -1070,13 +1092,13 @@ function renderFlash(){
   $("#rv-progress").style.width = (100*state.idx/state.deck.length)+"%";
   $("#rv-cat").textContent = `${c.category} · ${c.kind}`;
   $("#rv-count").textContent = `${state.idx+1} / ${state.deck.length}`;
-  tex($("#rv-front"), c.front);
+  tex($("#rv-front"), cardField(c, "front"));
   $("#rv-back-wrap").classList.add("hidden");
   $("#rv-flip").classList.remove("hidden");
 }
 function flipCard(){
   const c=state.deck[state.idx];
-  tex($("#rv-back"), c.back);
+  tex($("#rv-back"), cardField(c, "back"));
   $("#rv-back-wrap").classList.remove("hidden");
   $("#rv-flip").classList.add("hidden");
 }
@@ -1142,7 +1164,7 @@ function auditCard(a){
     const qc=CONF[String(a.q)];
     if(qc){ const q=document.createElement("span"); q.className="small muted"; q.textContent=`confiance déclarée : ${qc.label}`; head.append(q); }
   }
-  const front=document.createElement("div"); front.className="tex"; tex(front, a.front);
+  const front=document.createElement("div"); front.className="tex"; tex(front, cardField(a, "front"));
 
   const ta=document.createElement("textarea"); ta.placeholder="Écris ta preuve / ta réponse…";
   const btn=document.createElement("button"); btn.className="btn primary"; btn.textContent="Soumettre la réponse"; btn.style.marginTop="10px";
@@ -1153,7 +1175,7 @@ function auditCard(a){
     btn.disabled=true; btn.textContent="Correction…";
     const oldXp = state.me ? state.me.xp : 0;
     try{
-      const r=await api(`/audits/${a.id}/answer`, {method:"POST", body:{answer:ta.value}});
+      const r=await api(`/audits/${a.id}/answer`, {method:"POST", body:{answer:ta.value, lang:cardLang()}});
       out.appendChild(resultBox(r, a));
       ta.disabled=true; btn.classList.add("hidden");
       await refreshHeader();

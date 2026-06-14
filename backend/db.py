@@ -44,10 +44,13 @@ CREATE TABLE IF NOT EXISTS cards (
     course      TEXT NOT NULL,                -- ex: "MATH-330"
     category    TEXT NOT NULL,                -- ex: "Ch. 5", "Série 7"
     kind        TEXT NOT NULL,                -- "cours" | "exercice"
-    front       TEXT NOT NULL,                -- énoncé
-    back        TEXT NOT NULL,                -- réponse de référence
+    front       TEXT NOT NULL,                -- énoncé (langue par défaut, FR)
+    back        TEXT NOT NULL,                -- réponse de référence (FR)
     bareme_json TEXT NOT NULL,                -- barème /6 (voir README)
-    difficulty  INTEGER NOT NULL DEFAULT 2    -- 1=facile 2=moyen 3=dur
+    difficulty  INTEGER NOT NULL DEFAULT 2,   -- 1=facile 2=moyen 3=dur
+    front_en       TEXT,                      -- version anglaise (NULL si non traduite)
+    back_en        TEXT,
+    bareme_json_en TEXT
 );
 
 -- Une déclaration "connue/pas connue" en mode Réviser.
@@ -160,6 +163,12 @@ def _migrate(db: sqlite3.Connection) -> None:
     cols = {r["name"] for r in db.execute("PRAGMA table_info(audits)").fetchall()}
     if "exam_id" not in cols:
         db.execute("ALTER TABLE audits ADD COLUMN exam_id TEXT")
+
+    # Traductions anglaises des cartes (additif, ne touche ni aux niveaux ni à l'historique).
+    ccols = {r["name"] for r in db.execute("PRAGMA table_info(cards)").fetchall()}
+    for col in ("front_en", "back_en", "bareme_json_en"):
+        if col not in ccols:
+            db.execute(f"ALTER TABLE cards ADD COLUMN {col} TEXT")
 
     # Compétitions par cours : verse l'XP globale héritée des comptes existants dans
     # la compétition "Martingales" (l'ancien MATH-330), une seule fois (les comptes
