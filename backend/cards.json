@@ -6062,7 +6062,7 @@
       ]
     },
     "front": "Ruine du joueur, cas symétrique. Soit $(X_n)_{n\\ge1}$ i.i.d. avec $P(X_n=1)=P(X_n=-1)=1/2$, posons $S_n=X_1+\\dots+X_n$, $\\mathcal{F}_n=\\sigma(X_1,\\dots,X_n)$. Fixons $a<b\\in\\mathbb{N}^*$ et soit $\\tau=\\inf\\{n:S_n=b-a\\text{ ou }S_n=-a\\}$ (fini p.s.). Calculer la probabilité de ruine $\\rho=P(S_\\tau=-a)$ et la durée espérée $E[\\tau]$.",
-    "back": "$(S_n)$ est une martingale et $\\tau$ un temps d'arrêt, donc par le théorème d'arrêt $(S_{n\\wedge\\tau})$ est une martingale, d'où $E[S_{n\\wedge\\tau}]=E[S_0]=0$. Comme $\\tau<\\infty$ p.s., $S_{n\\wedge\\tau}\\to S_\\tau$ p.s., et $|S_{n\\wedge\\tau}|\\le(b-a)\\vee a$ est borné, donc par convergence dominée bornée $E[S_\\tau]=0$ :\n$$(b-a)(1-\\rho)+(-a)\\rho=0\\;\\Longrightarrow\\;\\rho=\\frac{b-a}{b}.$$\nPour $E[\\tau]$, on utilise la martingale $M_n=S_n^2-n$. Par le théorème d'arrêt, $E[S_{n\\wedge\\tau}^2-(\\tau\\wedge n)]=E[M_0]=0$, c.-à-d. $E[\\tau\\wedge n]=E[S_{\\tau\\wedge n}^2]$. En faisant $n\\to\\infty$ : convergence monotone donne $E[\\tau\\wedge n]\\to E[\\tau]$, convergence bornée donne $E[S_{\\tau\\wedge n}^2]\\to E[S_\\tau^2]$. D'où\n$$E[\\tau]=E[S_\\tau^2]=(b-a)^2(1-\\rho)+a^2\\rho=(b-a)^2\\tfrac{a}{b}+a^2\\tfrac{b-a}{b}=a(b-a).$$",
+    "back": "$(S_n)$ est une martingale et $\\tau$ un temps d'arrêt, donc par le théorème d'arrêt $(S_{n\\wedge\\tau})$ est une martingale, d'où $E[S_{n\\wedge\\tau}]=E[S_0]=0$. Comme $\\tau<\\infty$ p.s., $S_{n\\wedge\\tau}\\to S_\\tau$ p.s., et $|S_{n\\wedge\\tau}|\\le(b-a)\\vee a$ est borné, donc par convergence bornée $E[S_\\tau]=0$ :\n$$(b-a)(1-\\rho)+(-a)\\rho=0\\;\\Longrightarrow\\;\\rho=\\frac{b-a}{b}.$$\nPour $E[\\tau]$, on utilise la martingale $M_n=S_n^2-n$. Par le théorème d'arrêt, $E[S_{n\\wedge\\tau}^2-(\\tau\\wedge n)]=E[M_0]=0$, c.-à-d. $E[\\tau\\wedge n]=E[S_{\\tau\\wedge n}^2]$. En faisant $n\\to\\infty$ : convergence monotone donne $E[\\tau\\wedge n]\\to E[\\tau]$, convergence bornée donne $E[S_{\\tau\\wedge n}^2]\\to E[S_\\tau^2]$. D'où\n$$E[\\tau]=E[S_\\tau^2]=(b-a)^2(1-\\rho)+a^2\\rho=(b-a)^2\\tfrac{a}{b}+a^2\\tfrac{b-a}{b}=a(b-a).$$",
     "bareme": {
       "total": 6,
       "points": [
@@ -6191,7 +6191,7 @@
           "weight": 2
         },
         {
-          "label": "Case $m>1$: $Z_n\\sim W_\\infty m^n$ on $(W_\\infty>0)$; survival iff $\\sum k^2\\mu(\\{k\\})<\\infty$",
+          "label": "Case $m>1$: $Z_n\\sim W_\\infty m^n$ on $(W_\\infty>0)$; survival if $\\sum k^2\\mu(\\{k\\})<\\infty$",
           "weight": 2
         }
       ]
@@ -6210,7 +6210,7 @@
           "weight": 2
         },
         {
-          "label": "Cas $m>1$ : $Z_n\\sim W_\\infty m^n$ sur $(W_\\infty>0)$; survie ssi $\\sum k^2\\mu(\\{k\\})<\\infty$",
+          "label": "Cas $m>1$ : $Z_n\\sim W_\\infty m^n$ sur $(W_\\infty>0)$; survie si $\\sum k^2\\mu(\\{k\\})<\\infty$",
           "weight": 2
         }
       ]
