@@ -259,7 +259,8 @@ def progress(u=Depends(current_user)):
 class ReviewIn(BaseModel):
     card_id: str
     known: bool
-    q: Optional[float] = None     # confiance si known (sinon ignorée)
+    q: Optional[float] = None       # confiance si known (sinon ignorée)
+    shuffled: Optional[bool] = False  # session en ordre mélangé -> bonus d'XP de base
 
 
 @app.post("/review")
@@ -276,18 +277,22 @@ def review(r: ReviewIn, u=Depends(current_user)):
         # Profil du cours : Time Series ne rapporte qu'un petit XP en révision
         # (base_known=0.3) car son XP vient surtout des examens à note déclarée.
         base_known = S.profile_for(course)["base_known"]
+        # Bonus si la session est mélangée (rappel plus dur -> +25% sur les points de base).
+        mult = S.SHUFFLE_MULT if r.shuffled else 1.0
 
         if not r.known:
+            pts = round(S.BASE_UNKNOWN * mult, 2)
             db.execute("""INSERT INTO reviews(user_id,card_id,known,q,base_points,status)
                           VALUES (?,?,0,NULL,?, 'cleared')""",
-                       (u["id"], r.card_id, S.BASE_UNKNOWN))
-            apply_xp(db, u["id"], course, S.BASE_UNKNOWN)
+                       (u["id"], r.card_id, pts))
+            apply_xp(db, u["id"], course, pts)
         else:
             q = r.q if r.q in S.CONF_LEVELS else 0.80
+            pts = round(base_known * mult, 2)
             cur = db.execute("INSERT INTO reviews(user_id,card_id,known,q,base_points,status) "
                              "VALUES (?,?,1,?,?, 'provisional')",
-                             (u["id"], r.card_id, q, base_known))
-            apply_xp(db, u["id"], course, base_known)   # crée la ligne scores si besoin
+                             (u["id"], r.card_id, q, pts))
+            apply_xp(db, u["id"], course, pts)   # crée la ligne scores si besoin
             db.execute("UPDATE scores SET known_since_audit = known_since_audit + 1 "
                        "WHERE user_id=? AND course=?", (u["id"], course))
 

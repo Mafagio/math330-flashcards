@@ -277,6 +277,8 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 .seg button{flex:1;border:none;background:transparent;color:var(--modal-text);padding:10px;font-size:13.5px;
   font-weight:600;cursor:pointer;transition:.12s}
 .seg button.sel{background:var(--accent);color:#fff}
+.seg .seg-tag{font-size:11px;font-weight:700;margin-left:6px;padding:1px 6px;border-radius:6px;
+  background:rgba(255,255,255,.22)}
 
 /* ---------- Progression ---------- */
 .prog-legend{display:flex;flex-wrap:wrap;gap:12px;margin:2px 0 16px;font-size:12.5px;color:var(--muted)}
@@ -433,6 +435,13 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
       <div style="margin-top:14px">
         <label class="fld">Chapitres / séries</label>
         <div id="rv-cats" class="cat-groups"></div>
+      </div>
+      <div style="margin-top:16px">
+        <label class="fld">Ordre des cartes</label>
+        <div class="seg" id="rv-order-seg">
+          <button data-shuffle="1" class="sel">🔀 Mélangé <span class="seg-tag">+25% XP</span></button>
+          <button data-shuffle="0">↕︎ Dans l'ordre</button>
+        </div>
       </div>
       <div style="margin-top:18px">
         <button class="btn primary" id="rv-start">Commencer la session</button>
@@ -1025,15 +1034,33 @@ $("#rv-start").onclick = startReview;
 $("#rv-again").onclick = ()=>{ show("#review-setup"); };
 $("#rv-flip").onclick  = flipCard;
 
+/* Ordre des cartes (mélangé = +25% XP) — sélection + persistance */
+(function(){
+  const seg=$("#rv-order-seg"); if(!seg) return;
+  const pref=localStorage.getItem("battle_shuffle"); // "1" mélangé (défaut) | "0" dans l'ordre
+  if(pref==="0"){ seg.querySelectorAll("button").forEach(b=>b.classList.toggle("sel", b.dataset.shuffle==="0")); }
+  seg.querySelectorAll("button").forEach(b=> b.onclick=()=>{
+    seg.querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");
+    try{ localStorage.setItem("battle_shuffle", b.dataset.shuffle); }catch(e){}
+  });
+})();
+
 async function startReview(){
   const course=$("#rv-course").value;
   const cats=$$("#rv-cats input:checked").map(i=>i.value);
   if(!cats.length){ toast("Choisis au moins un chapitre.","alert"); return; }
   let deck = await api(`/cards?course=${encodeURIComponent(course)}&categories=${encodeURIComponent(cats.join(","))}`);
   if(!deck.length){ toast("Aucune carte ici.","alert"); return; }
-  // shuffle
-  for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
-  state.deck=deck; state.idx=0; state.session={seen:0, xp0:state.me.xp};
+  const shuffled = ($("#rv-order-seg button.sel")||{}).dataset?.shuffle === "1";
+  if(shuffled){
+    for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
+  }else{
+    // dans l'ordre : par catégorie (Chapitres/Séries…) puis par id
+    deck.sort((a,b)=>{ const ka=catKey(a.category), kb=catKey(b.category);
+      return ka[0]-kb[0] || ka[1]-kb[1] || String(a.id).localeCompare(String(b.id),undefined,{numeric:true}); });
+  }
+  state.deck=deck; state.idx=0; state.session={seen:0, xp0:state.me.xp, shuffled};
   show("#review-card"); renderFlash();
 }
 function show(sel){ ["#review-setup","#review-card","#review-done"].forEach(s=>$(s).classList.toggle("hidden", s!==sel)); }
@@ -1058,7 +1085,7 @@ $$("#review-card .conf").forEach(btn=> btn.onclick=()=>declare(btn));
 async function declare(btn){
   const c=state.deck[state.idx];
   const known = btn.dataset.known==="1";
-  const body = {card_id:c.id, known};
+  const body = {card_id:c.id, known, shuffled: !!(state.session && state.session.shuffled)};
   if(known) body.q = parseFloat(btn.dataset.q);
   const oldXp = state.me ? state.me.xp : 0;
   try{

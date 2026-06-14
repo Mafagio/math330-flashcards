@@ -29,6 +29,10 @@ from __future__ import annotations
 BASE_KNOWN: float = 1.0      # XP immédiat pour une carte marquée "connue"
 BASE_UNKNOWN: float = 0.3    # XP immédiat pour un honnête "pas connue" (revient)
 
+# Réviser en ORDRE MÉLANGÉ est plus dur (vrai rappel, pas d'anticipation) que dans
+# l'ordre : on récompense ce mode honnête par un petit bonus sur les points de base.
+SHUFFLE_MULT: float = 1.25   # +25% d'XP de base quand la session est mélangée
+
 AUDIT_BATCH: int = 20        # toutes les 20 cartes "connues"...
 AUDIT_SAMPLE: int = 4        # ...4 sont tirées au sort en audit (test écrit)
 
