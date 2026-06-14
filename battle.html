@@ -221,6 +221,10 @@ select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);
 .rv-resume-row.teal .rr-info b{color:#0f766e}
 .rv-resume-row.teal .btn.primary{background:#0d9488;border-color:#0d9488}
 .rv-resume-row.teal .rr-count{font-weight:800;color:#0f766e}
+.rv-resume-row.loop{border-color:#8b5cf6;background:rgba(139,92,246,.14)}
+.rv-resume-row.loop .rr-info b{color:#6d28d9}
+.rv-resume-row.loop .btn.primary{background:#7c3aed;border-color:#7c3aed}
+.rv-resume-row.loop .rr-count{font-weight:800;color:#6d28d9}
 .rv-resume-drop{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:4px}
 .rv-resume-drop:hover{color:#e5484d}
 .rv-check{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;cursor:pointer;line-height:1.4}
@@ -471,6 +475,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
       <div id="rv-resume" class="rv-resume hidden"></div>
       <div id="rv-unsure-banner" class="rv-resume hidden"></div>
       <div id="rv-seen-banner" class="rv-resume hidden"></div>
+      <div id="rv-loop-banner" class="rv-resume hidden"></div>
       <div class="row">
         <div class="grow">
           <label class="fld">Cours</label>
@@ -494,13 +499,9 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
           <button data-shuffle="0">↕︎ Dans l'ordre</button>
         </div>
       </div>
-      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <div style="margin-top:18px">
         <button class="btn primary" id="rv-start">Commencer la session</button>
-        <button class="btn" id="rv-start-loop">🔁 Tout réviser jusqu'à savoir</button>
       </div>
-      <p class="small muted" style="margin-top:8px">
-        🔁 <b>Mode boucle</b> : les cartes que tu ne marques pas « Très sûr » reviennent dans la
-        pile, jusqu'à ce que tu maîtrises toute la sélection.</p>
     </div>
 
     <div class="card hidden" id="review-card">
@@ -1129,7 +1130,6 @@ function renderCats(){
    REVIEW (mode battle)
    ================================================================= */
 $("#rv-start").onclick = ()=>startReview();
-$("#rv-start-loop").onclick = ()=>startReview({loop:true});
 $("#rv-again").onclick = ()=>{ show("#review-setup"); reviewSetupRefresh(); };
 $("#rv-flip").onclick  = flipCard;
 $("#rv-exit").onclick  = ()=>{ persistSession(); show("#review-setup"); reviewSetupRefresh(); };  // quitter en cours -> proposé en "Reprendre"
@@ -1256,20 +1256,29 @@ function updateBanners(){
   const course=$("#rv-course") ? $("#rv-course").value : null;
   const cats=$$("#rv-cats input:checked").map(i=>i.value);
   const acc=(course && cats.length) ? levelCounts(course,cats) : null;
-  // orange : pas encore sûres (niveau < 3, jamais vues incluses)
-  renderFilterBanner($("#rv-unsure-banner"), "orange", "unsure",
+  const nTotal = acc ? acc["-1"]+acc["0"]+acc["1"]+acc["2"]+acc["3"]+acc["4"] : null;
+  // orange : pas encore sûres (niveau < 3, jamais vues incluses), un passage
+  renderFilterBanner($("#rv-unsure-banner"), "orange",
     acc ? acc["-1"]+acc["0"]+acc["1"]+acc["2"] : null,
     {label:"À revoir", word:"pas encore sûres à 100%",
-     sub:"exclut les « Très sûr » / validées en audit — à refaire jusqu'à les maîtriser",
-     zero:"tout est sûr à 100% 🎉"});
-  // teal : déjà vues mais pas sûres (niveau 0/1/2 — jamais vues exclues)
-  renderFilterBanner($("#rv-seen-banner"), "teal", "seen",
+     sub:"un passage sur les cartes pas encore « Très sûr » / validées en audit",
+     zero:"tout est sûr à 100% 🎉", btn:n=>`Réviser ces ${n}`},
+    ()=>startReview({filter:'unsure'}));
+  // teal : déjà vues mais pas sûres (niveau 0/1/2 — jamais vues exclues), un passage
+  renderFilterBanner($("#rv-seen-banner"), "teal",
     acc ? acc["0"]+acc["1"]+acc["2"] : null,
     {label:"Déjà vues à revoir", word:"vues mais pas encore sûres",
      sub:"cartes vues au moins une fois mais pas encore « Très sûr » (jamais vues exclues)",
-     zero:"rien à revoir parmi les cartes déjà vues ✨"});
+     zero:"rien à revoir parmi les cartes déjà vues ✨", btn:n=>`Réviser ces ${n}`},
+    ()=>startReview({filter:'seen'}));
+  // violet : TOUT réviser en BOUCLE jusqu'à maîtrise (sélection complète)
+  renderFilterBanner($("#rv-loop-banner"), "loop", nTotal,
+    {label:"Tout réviser jusqu'à savoir", word:"à maîtriser en boucle",
+     sub:"🔁 chaque carte revient dans la pile tant qu'elle n'est pas « Très sûr », jusqu'à tout maîtriser",
+     zero:"aucune carte sélectionnée", btn:n=>`Lancer 🔁`},
+    ()=>startReview({loop:true}));
 }
-function renderFilterBanner(box, cls, filter, n, txt){
+function renderFilterBanner(box, cls, n, txt, onClick){
   if(!box) return;
   if(n===null){ box.classList.add("hidden"); box.innerHTML=""; return; }
   box.classList.remove("hidden"); box.innerHTML="";
@@ -1279,8 +1288,8 @@ function renderFilterBanner(box, cls, filter, n, txt){
     info.innerHTML=`<b>${txt.label}</b> · <span class="rr-count">${n}</span> carte(s) <b>${txt.word}</b>`+
                    `<br><span class="rr-sub">${txt.sub}</span>`;
     const actions=document.createElement("div"); actions.className="rr-actions";
-    const btn=document.createElement("button"); btn.className="btn primary sm"; btn.textContent=`Réviser ces ${n}`;
-    btn.onclick=()=>startReview({filter});
+    const btn=document.createElement("button"); btn.className="btn primary sm"; btn.textContent=txt.btn(n);
+    btn.onclick=onClick;
     actions.appendChild(btn); row.append(info, actions);
   }else{
     info.innerHTML=`<b>${txt.label}</b> · <span class="rr-count">0</span> — ${txt.zero}`;
