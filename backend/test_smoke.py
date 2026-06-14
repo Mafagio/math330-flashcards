@@ -1,6 +1,7 @@
 import os, tempfile, json
 os.environ["DB_PATH"] = tempfile.mktemp(suffix=".db")
 os.environ["ANTHROPIC_API_KEY"] = ""   # -> stub grader
+os.environ["GRADER_ALLOW_STUB"] = "1"  # autorise la correction stub (sinon -> 503 en l'absence de LLM)
 
 from fastapi.testclient import TestClient
 import main, db as DB, import_cards, scoring as S

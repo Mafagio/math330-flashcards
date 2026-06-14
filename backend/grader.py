@@ -90,7 +90,9 @@ def grade(front: str, back: str, bareme: dict, answer: str) -> dict:
         return {"score": 0, "justification": "Réponse vide.", "hits": []}
 
     if not API_KEY:
-        return _stub_grade(back, bareme, answer)
+        res = _stub_grade(back, bareme, answer)
+        res["stub"] = True          # pas de vrai correcteur -> ne PAS pénaliser
+        return res
 
     try:
         body = json.dumps({
@@ -127,7 +129,8 @@ def grade(front: str, back: str, bareme: dict, answer: str) -> dict:
         print(f"[grader] correcteur LLM indisponible : {type(e).__name__}"
               f"{' HTTP '+str(code) if code else ''}: {e}", flush=True)
         res = _stub_grade(back, bareme, answer)
-        res["unavailable"] = True   # l'appelant NE DOIT PAS pénaliser sur cette base
+        res["stub"] = True          # l'appelant NE DOIT PAS pénaliser sur cette base
+        res["unavailable"] = True
         res["justification"] = f"[correcteur indisponible] {res['justification']}"
         return res
 

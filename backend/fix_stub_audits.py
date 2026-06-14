@@ -1,16 +1,16 @@
 """
-fix_stub_audits.py — répare les audits notés à tort par le correcteur « stub » alors que
-le correcteur LLM était indisponible (justification « correcteur indisponible »).
+fix_stub_audits.py — répare les audits notés par le correcteur « stub » (mots-clés) au lieu
+du vrai correcteur LLM (justification contenant « stub »), et SUPPRIME les notifications
+« raté » erronées du fil d'activité.
 
-Pour chaque tel audit (source='audit'), on RE-CORRIGE la réponse stockée avec le correcteur
-(réparé) :
-  - s'il répond -> on ajuste l'XP du score stub (souvent 0) vers le vrai score, et on met
-    à jour l'audit (status/score/justification/mastery) ;
-  - s'il est ENCORE indisponible -> on retire simplement la pénalité injuste et on remet
-    l'audit en attente (l'utilisateur le refera, sans rien avoir perdu).
+Pour chaque audit concerné (source='audit') :
+  - on RE-CORRIGE la réponse stockée avec le correcteur (réparé) ; s'il répond pour de vrai,
+    on ajuste l'XP du score stub vers le vrai score et on met à jour l'audit ;
+  - s'il n'y a pas de vrai correcteur (encore stub), on retire la pénalité injuste et on
+    remet l'audit en attente.
+  - dans les deux cas, on efface l'évènement « raté … XP » correspondant du fil.
 
-Idempotent : une fois re-corrigé (ou remis en attente), la justification ne contient plus
-« correcteur indisponible » -> l'audit n'est plus re-traité.
+Idempotent : après traitement la justification ne contient plus « stub » -> plus re-traité.
 """
 import json
 import db as DB
@@ -34,32 +34,33 @@ def main():
     DB.init_db()
     con = DB.get_db()
     rows = con.execute("""
-        SELECT a.id, a.user_id, a.q, a.mastery, a.answer, c.course,
+        SELECT a.id, a.user_id, a.q, a.mastery, a.answer, c.course, c.category,
                c.front, c.back, c.bareme_json
         FROM audits a JOIN cards c ON c.id = a.card_id
-        WHERE a.justification LIKE '%correcteur indisponible%'
+        WHERE a.justification LIKE '%stub%'
               AND a.status IN ('passed','failed') AND a.source='audit'
-        LIMIT 30
+        LIMIT 50
     """).fetchall()
 
     # 1) re-correction (appels API HORS verrou)
     graded = []
     for a in rows:
         if not (a["answer"] or "").strip():
-            graded.append((a, None)); continue
+            graded.append((a, {"stub": True})); continue
         try:
             res = grade(a["front"], a["back"], json.loads(a["bareme_json"]), a["answer"])
         except Exception:
-            res = {"unavailable": True}
+            res = {"stub": True}
         graded.append((a, res))
 
-    # 2) application en base (sous verrou)
-    regraded = refunded = 0
+    # 2) application en base (sous verrou) + nettoyage du fil
+    regraded = refunded = events_del = 0
+    pairs = set()
     with DB.LOCK:
         for a, res in graded:
             old_gain = round((a["mastery"] or 0) + S.AUDIT_BONUS, 2)   # XP nette qu'avait appliquée le stub
-            if res is None or res.get("unavailable"):
-                # toujours indisponible -> on enlève la pénalité injuste et on remet en attente
+            if res.get("stub"):
+                # pas de vrai correcteur -> on enlève la pénalité injuste et on remet en attente
                 _adjust_xp(con, a["user_id"], a["course"], -old_gain)
                 con.execute("UPDATE audits SET status='pending', score=NULL, justification=NULL, "
                             "mastery=0, graded_at=NULL WHERE id=?", (a["id"],))
@@ -73,9 +74,17 @@ def main():
                             ("passed" if outcome else "failed", res["score"],
                              str(res.get("justification", "")), new_mastery, a["id"]))
                 regraded += 1
+            pairs.add((a["user_id"], a["category"]))
+
+        # 3) supprime les notifications « raté … XP » erronées (par utilisateur+catégorie)
+        for uid, cat in pairs:
+            cur = con.execute(
+                "DELETE FROM events WHERE user_id=? AND type='graded' "
+                "AND text LIKE ? AND text LIKE '%raté%'", (uid, f"%— {cat} :%"))
+            events_del += cur.rowcount or 0
         con.commit()
-    print(f"STUB_AUDIT_FIX: {regraded} audit(s) re-corrigé(s), {refunded} pénalité(s) retirée(s) "
-          f"(correcteur encore indisponible).")
+    print(f"STUB_AUDIT_FIX: {regraded} re-corrigé(s), {refunded} pénalité(s) retirée(s), "
+          f"{events_del} notification(s) erronée(s) supprimée(s).")
 
 
 if __name__ == "__main__":
