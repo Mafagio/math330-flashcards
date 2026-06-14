@@ -425,10 +425,13 @@ def answer_audit(audit_id: int, a: AnswerIn, u=Depends(current_user)):
             exam_delta, _st = _finalize_exam_check(db, u["id"], au["exam_id"])
             reported_mastery = round(exam_delta, 1) if exam_delta is not None else 0.0
         else:
-            # Maîtrise (règle propre) appliquée à l'audité DANS LE COURS de la carte.
-            apply_xp(db, u["id"], course, mastery)
+            # Maîtrise (règle propre) + bonus FIXE par audit fait (proposer une preuve
+            # demande un vrai effort) -> audits plus rémunérateurs, moins punitifs.
+            bonus = S.AUDIT_BONUS if au["source"] in ("audit", "challenge") else 0.0
+            gain = round(mastery + bonus, 2)
+            apply_xp(db, u["id"], course, gain)
             DB.log_event(db, u["id"], "graded",
-                         f'📝 {u["name"]} — {card["category"]} : {res["score"]}/6 ({verdict}, {mastery:+.1f} XP).')
+                         f'📝 {u["name"]} — {card["category"]} : {res["score"]}/6 ({verdict}, {gain:+.1f} XP).')
 
             # Conséquences spécifiques challenge (vaut aussi pour un challenge ciblant un exo d'examen)
             if au["source"] == "challenge" and au["challenger_id"]:
@@ -444,7 +447,7 @@ def answer_audit(audit_id: int, a: AnswerIn, u=Depends(current_user)):
 
             if au["source"] == "duel" and au["duel_id"]:
                 _maybe_resolve_duel(db, au["duel_id"])
-            reported_mastery = mastery
+            reported_mastery = gain
 
         db.commit()
         s = read_score(db, u["id"], "Time Series" if is_exam else course)

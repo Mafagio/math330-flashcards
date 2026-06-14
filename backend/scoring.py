@@ -40,6 +40,12 @@ MASTERY_W: float = 10.0      # échelle de la règle de score propre (Brier)
 PASS_SCORE: int = 4          # note /6 à partir de laquelle l'audit est "réussi"
 MAX_SCORE: int = 6
 
+# Bonus FIXE ajouté à CHAQUE audit fait (réussi ou raté) : récompense l'effort de
+# rédiger une vraie preuve et adoucit la pénalité. C'est une CONSTANTE -> elle ne
+# change pas la confiance q optimale à déclarer (l'honnêteté reste la stratégie
+# gagnante : seule la maîtrise Brier dépend de q).
+AUDIT_BONUS: float = 2.5
+
 # Niveaux de confiance déclarables (touches 2 / 3 / 4 en révision).
 CONF_LEVELS: list[float] = [0.60, 0.80, 0.95]
 
